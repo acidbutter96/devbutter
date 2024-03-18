@@ -19,10 +19,14 @@
     width: 100vw;
 
     border-bottom: .4px solid rgba(255,255,255,0.01);
+
+    z-index: 10;
 }
 
 .logoContainer {
     width: 50%;
+
+    padding-left: 1rem;
 }
 
 .buttonsContainer {

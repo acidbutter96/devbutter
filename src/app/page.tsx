@@ -6,7 +6,7 @@ import { DevButter } from "@/components/DevButter";
 
 export default function Home() {
   return (
-    <div>
+    <div className={styles.noOverflow}>
       <Header></Header>
       <RollerContainer>
         <DevButter/>

@@ -1,6 +1,132 @@
-.container {
-    background-color: red;
+$height: calc(100vh - 6rem);
 
+.container {
     padding: 0 4rem;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: $height;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+}
+
+.firstColumn {
+    display: flex;
+    flex-direction: column-reverse;
+
+    padding-bottom: 10rem;
+
+    position: relative;
+
+    height: $height;
+    width: 40%;
+
+    .titleContainer {
+        position: absolute;
+        left: 4rem;
+        top: 16rem;
+    
+        font-size: 4rem;
+    
+        width: 50rem;
+    
+        .title {
+            color: var(--green-500);
+    
+            font-size: 3rem;
+        }
+        
+        .text {
+            color: var(--white);
+        }
+    
+        transition: all 2s !important;
+    
+        cursor: default;
+    
+        z-index: 2;
+    
+        &:hover {
+            top: 20rem;
+
+            .title {
+                color: var(--white);
+            }
+            
+            .text {
+                color: var(--green-500);
+            }
+        }
+    }
+    
+}
+
+.secondColumn {
+    width: 60%;
+    height: 100%;
+
+    position: relative;
+
+    z-index: 0;
+}
+
+.imageContainer {
+    position: absolute;
+    left: -19rem;
+
+    // transition: all 2s;
+    // &:hover {
+    //     left: -24rem;
+    // }
+}
+
+.swipeupContainer {
+
+    background-color: transaprent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position:absolute;
+    bottom: 2rem;
+
+    z-index: 5;
+    
+    width: 100%;
+    height: 10rem;
+
+    .swipeupButton {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        font-family: 'Roboto';
+        font-weight: 600;
+        font-size: 1.5rem;
+        color: var(--green-500);
+
+        cursor: pointer;
+
+        .swipeupButtonCentered {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &:hover {
+
+        }
+    }
 
 }
