@@ -2,13 +2,14 @@ import Link from 'next/link';
 
 import styles from './styles.module.scss';
 import React from 'react';
+import Image from 'next/image';
 
 export const Header = (): React.JSX.Element => {
     return (
         <header className={styles.headerContainer}>
             <nav className={styles.navbarContainer}>
                 <div id="logo-container" className={styles.logoContainer}>
-                    <img src="/devbutter.svg" alt="" />
+                    <Image src="/devbutter.svg" alt="" width={100} height={100}/>
                 </div>
                 <div id="buttons-container" className={styles.buttonsContainer}>
                     <button>

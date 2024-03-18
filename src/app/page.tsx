@@ -1,12 +1,16 @@
 import Image from "next/image";
 import styles from "./page.module.scss";
-import { Header } from "../components/Header"
+import { Header } from "@/components/Header"
+import { RollerContainer } from "@/components/RollerContainer";
+import { DevButter } from "@/components/DevButter";
+
 export default function Home() {
   return (
     <div>
       <Header></Header>
-      <main className={styles.main}>
-      </main>
+      <RollerContainer>
+        <DevButter/>
+      </RollerContainer>
     </div>
   );
 }
