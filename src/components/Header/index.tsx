@@ -12,7 +12,7 @@ export const Header = (): React.JSX.Element => {
                     <Image src="/devbutter.svg" alt="" width={70} height={70}/>
                 </div>
                 <div id="buttons-container" className={styles.buttonsContainer}>
-                    <button>
+                    {/* <button>
                         Home
                     </button>
                     <button>
@@ -23,7 +23,7 @@ export const Header = (): React.JSX.Element => {
                     </button>
                     <button>
                         Contacts
-                    </button>
+                    </button> */}
                 </div>
             </nav>
         </header>
