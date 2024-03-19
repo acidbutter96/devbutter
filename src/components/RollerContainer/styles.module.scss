@@ -1,6 +1,4 @@
 .main {
-    margin-top: 7rem;
-
     overflow-x: hidden;
     overflow-y: hidden;
 
@@ -16,4 +14,8 @@
     &::-webkit-scrollbar-track {
         background-color: var(--blue-50);
     }
+}
+
+.haveMargin {
+    margin-top: 7rem;
 }

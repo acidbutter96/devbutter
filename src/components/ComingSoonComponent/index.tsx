@@ -5,7 +5,8 @@ import Image from 'next/image';
 
 export const ComingSoonComponent = (): React.JSX.Element => {
     const imageDim = [880, 540]
-    const multiple = 1.9;
+    const multiple = 1.9
+
     return (
         <div id="devbutter" className={styles.container}>
             <div id="row1" className={styles.row}>
@@ -22,22 +23,13 @@ export const ComingSoonComponent = (): React.JSX.Element => {
                 <div id="image-container" className={styles.secondColumn}>
                     <div className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} />
+                            <Image src="/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive"/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="row2" className={styles.row}>
-                <div id="swipeup" className={styles.swipeupContainer}>
-                    <div className={styles.swipeupButton}>
-                        <div id="arrow" className={styles.swipeUpButtonCentered}>
-                            <Image src="/swipearrow.svg" alt="up arrow" width={30} height={30}/>
-                        </div>
-                        <div id="text" className={styles.swipeUpButtonCentered}>
-                            swipe up
-                        </div>
-                    </div>
-                </div>
+            <div id="background-spiral" className={styles.backgroundSpinner}>
+                <Image src="/spiral.svg" alt="spinner" width={1200} height={1200} />
             </div>
         </div>
     )

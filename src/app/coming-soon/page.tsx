@@ -1,17 +1,14 @@
+import Image from "next/image";
 import styles from "./page.module.scss";
 import { Header } from "@/components/Header"
 import { RollerContainer } from "@/components/RollerContainer";
-import { DevButter } from "@/components/DevButter";
-import { redirect } from "next/navigation";
+import { ComingSoonComponent } from "@/components/ComingSoonComponent";
 
 export default () => {
-
-  redirect('coming-soon');
   return (
     <div className={styles.noOverflow}>
-      <Header />
-      <RollerContainer haveMargin={true}>
-        <DevButter/>
+      <RollerContainer haveMargin={false}>
+        <ComingSoonComponent/>
       </RollerContainer>
     </div>
   );

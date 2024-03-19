@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import styles from './styles.module.scss';
 import Image from 'next/image';
 
@@ -15,8 +13,8 @@ export const DevButter = (): React.JSX.Element => {
                             DevButter!
                         </h1>
                         <p className={styles.text}>
-                            Desenvolvimento Fullstack <br />
-                            e Data Analytics.
+                            Fullstack Development <br />
+                            and Data Analytics.
                         </p>
                     </div>
                 </div>
