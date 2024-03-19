@@ -134,7 +134,7 @@ $height: calc(100vh - 6rem);
 }
 
 .backgroundSpinner {
-    position: absolute;
+    position: fixed;
 
     z-index: 0;
 
