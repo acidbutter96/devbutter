@@ -4,7 +4,7 @@ import { RollerContainer } from "@/components/RollerContainer";
 import { DevButter } from "@/components/DevButter";
 import { redirect } from "next/navigation";
 
-export default () => {
+export default function Home() {
 
   redirect('coming-soon');
   return (
