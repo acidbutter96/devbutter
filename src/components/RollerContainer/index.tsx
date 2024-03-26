@@ -6,7 +6,7 @@ export const RollerContainer = ({ children, haveMargin = true }: Readonly<{
     children: React.ReactNode;
     haveMargin: boolean;
 }>): React.JSX.Element => (
-    <main className={`${styles.main} ${haveMargin ? styles.haveMargin : ''}`}>
+    <div className={styles.content}>
         {children}
-    </main>
+    </div>
 )

@@ -1,7 +1,10 @@
-.main {
-    overflow-x: hidden;
-    overflow-y: hidden;
+.content {
+    height: calc(100vh - 6rem);
 
+    margin-top: calc(var(--header-height)) !important;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
     &::-webkit-scrollbar {
         width: 10px;
     }
@@ -14,8 +17,4 @@
     &::-webkit-scrollbar-track {
         background-color: var(--blue-50);
     }
-}
-
-.haveMargin {
-    margin-top: 7rem;
 }

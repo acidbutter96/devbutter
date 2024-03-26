@@ -3,15 +3,21 @@ import { Header } from "@/components/Header"
 import { RollerContainer } from "@/components/RollerContainer";
 import { DevButter } from "@/components/DevButter";
 import { redirect } from "next/navigation";
+import { ContactUS } from "@/components/ContactUs";
+import { Projects } from "@/components/Projects";
 
 export default function Home() {
-  redirect('coming-soon');
+  // redirect('coming-soon');
   return (
-    <div className={styles.noOverflow}>
+    <>
       <Header />
-      <RollerContainer haveMargin={true}>
-        <DevButter/>
-      </RollerContainer>
-    </div>
+      <main className={styles.mainContainer}>
+        <RollerContainer haveMargin={true}>
+          <DevButter />
+          <Projects />
+          <ContactUS />
+        </RollerContainer>
+      </main>
+    </>
   );
 }
