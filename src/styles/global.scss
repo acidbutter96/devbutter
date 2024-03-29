@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    overflow: hidden;
 }
 
 html {
@@ -41,7 +43,7 @@ body {
     background-color: var(--blue-50);
     color: var(--white);
 
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 body, input, textarea, button {
