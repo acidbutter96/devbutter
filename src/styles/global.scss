@@ -3,7 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 
-    overflow: hidden;
+    font-family: Roboto, sans-serif;
 }
 
 html {
@@ -21,7 +21,6 @@ html {
     --white: #FFF;
 
     --green-500: #04D361;
-
 
     --header-height: 6rem;
 
@@ -47,14 +46,14 @@ body {
 }
 
 body, input, textarea, button {
-    font: 500 1rem Inter, sans-serif;
-    color: var(--gray--500);
+    font: 500 1rem Roboto, sans-serif;
+    color: var(--white);
 }
 
 h1,h2,h3,h4,h5,h6{
     font-weight: 600;
-    font-family: Lexend, sans-serif;
-    color: var(--gray--800);
+    font-family: Roboto, sans-serif;
+    color: var(--white);
 }
 
 h1 {
