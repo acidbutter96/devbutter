@@ -8,6 +8,7 @@ export const RollerContainer = ({ children, isComingSoon = true }: Readonly<{
     children: React.ReactNode;
     isComingSoon: boolean;
 }>): React.JSX.Element => {
+
     const isComingSoonStyle = isComingSoon ? styles.isComingSoon : "";
     return (
         <div className={`${styles.content} ${isComingSoonStyle}`}>
