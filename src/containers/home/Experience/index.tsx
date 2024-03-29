@@ -1,8 +1,8 @@
 "use client";
 
-import styles from &lsquo;./styles.module.scss&lsquo;;
-import Image from &lsquonext/image&lsquo;;
-import { useState } from &lsquoreact&lsquo;;
+import styles from "./styles.module.scss";
+import Image from "next/image";
+import { useState } from "react";
 
 export const Experience = (): React.JSX.Element => {
     const [rotateBackward, setRotateBackward] = useState<boolean>(false);
@@ -37,7 +37,7 @@ export const Experience = (): React.JSX.Element => {
                 </div>
                 <div className={styles.experienceTextContainer}>
                     <p>
-                        It is a long established fact that a reader will be distracted by the readable content of a <span className={styles.pinkHighlight}>page</span> when looking at its layout. The point of using <span className={styles.greenHighlight}>Lorem Ipsum</span> is that it has a more-or-less normal distribution of letters, as <span className={styles.pinkHighlight}>opposed to using</span> &lsquoContent here, content here&lsquo;, making it look like readable English. Many desktop <span className={styles.greenHighlight}></span> packages and web page editors now use Lorem Ipsum as their default model text, and a search for &lsquolorem ipsum&lsquo; will uncover <span className={styles.pinkHighlight}>many web sites</span> still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                        It is a long established fact that a reader will be distracted by the readable content of a <span className={styles.pinkHighlight}>page</span> when looking at its layout. The point of using <span className={styles.greenHighlight}>Lorem Ipsum</span> is that it has a more-or-less normal distribution of letters, as <span className={styles.pinkHighlight}>opposed to using</span> &lsquo;Content here, content here&rsquo;, making it look like readable English. Many desktop <span className={styles.greenHighlight}></span> packages and web page editors now use Lorem Ipsum as their default model text, and a search for &lsquo;lorem ipsum&rsquo; will uncover <span className={styles.pinkHighlight}>many web sites</span> still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
                     </p>
                 </div>
             </div>

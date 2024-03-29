@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "../styles/global.scss";
 
-export const roboto = Roboto({
+const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   style: ["normal"],
   subsets: ["latin"],

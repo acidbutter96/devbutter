@@ -41,7 +41,7 @@ export const ComingSoonComponent = (): React.JSX.Element => {
         return () => {
             window.removeEventListener('resize', updateScreenWidth);
         };
-    }, []);
+    }, [welcomeArray]);
 
     useEffect(() => {
         if (screenWidth && screenWidth <= 414) {
