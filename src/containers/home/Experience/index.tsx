@@ -3,16 +3,9 @@
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import { useState } from "react";
+import CarouselBuilder from "./Carousel";
 
 export const Experience = (): React.JSX.Element => {
-    const [rotateBackward, setRotateBackward] = useState<boolean>(false);
-
-    const changeSpin = () => {
-        console.log(rotateBackward);
-        setRotateBackward(!rotateBackward);
-        console.log(rotateBackward);
-    }
-
     return (
         <div id="projects" className={styles.container}>
             <div id="title" className={styles.firstRow}>
@@ -42,7 +35,9 @@ export const Experience = (): React.JSX.Element => {
                 </div>
             </div>
             <div className={styles.thirdRow}>
-
+                <div className={styles.carouselContainer}>
+                    <CarouselBuilder images={{}}/>
+                </div>
             </div>
 
         </div>
