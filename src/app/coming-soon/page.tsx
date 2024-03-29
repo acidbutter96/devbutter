@@ -5,7 +5,7 @@ import { ComingSoonComponent } from "@/containers/coming-soon-page/ComingSoonCom
 export default function ComingSoon() {
   return (
     <div className={styles.noOverflow}>
-      <RollerContainer haveMargin={false}>
+      <RollerContainer isComingSoon={true}>
         <ComingSoonComponent/>
       </RollerContainer>
     </div>

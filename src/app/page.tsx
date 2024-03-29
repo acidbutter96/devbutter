@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <Header />
       <main className={styles.mainContainer}>
-        <RollerContainer isComingSoon={true}>
+        <RollerContainer isComingSoon={false}>
           <DevButter />
           <Projects />
           <ContactUS />
