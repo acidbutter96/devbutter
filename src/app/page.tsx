@@ -7,12 +7,12 @@ import { ContactUS } from "@/containers/home/ContactUs";
 import { Projects } from "@/containers/home/Projects";
 
 export default function Home() {
-  // redirect('coming-soon');
+  redirect('coming-soon');
   return (
     <>
       <Header />
       <main className={styles.mainContainer}>
-        <RollerContainer haveMargin={true}>
+        <RollerContainer isComingSoon={true}>
           <DevButter />
           <Projects />
           <ContactUS />

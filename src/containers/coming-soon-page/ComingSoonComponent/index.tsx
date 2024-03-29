@@ -55,7 +55,7 @@ export const ComingSoonComponent = (): React.JSX.Element => {
         const timeout = setTimeout(() => {
             const randomIndex = Math.floor(Math.random() * welcomeArray.length);
             setCurrentWelcome(welcomeArray[randomIndex]);
-        }, 4000);
+        }, 2000);
 
         return () => clearTimeout(timeout);
     }, [welcomeArray]);
