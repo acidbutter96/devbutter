@@ -18,7 +18,9 @@ export const Header = ({ hiddenMenu = false }: { hiddenMenu?: boolean }): React.
         <header className={styles.headerContainer}>
             <nav className={styles.navbarContainer}>
                 <div id="logo-container" className={styles.logoContainer}>
-                    <Image src="/devbutter.svg" alt="" width={70} height={70} />
+                    <div className={styles.imgContainer}>
+                        <Image src="/devbutter.svg" alt="" width={70} height={70} />
+                    </div>
                 </div>
                 <div id="buttons-container" className={styles.buttonsContainer}>
                     {hiddenMenu ? null : (

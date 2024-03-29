@@ -10,6 +10,10 @@
     align-items: center;
     justify-content: space-around;
 
+    @media screen and (max-width: 430px) {
+        justify-content: center;
+    }
+
     padding-inline: 1rem;
 
     background-color: var(--blue-100);
@@ -24,8 +28,15 @@
 
 .logoContainer {
     width: 50%;
+    display: flex;
 
     padding-left: 1rem;
+
+    @media screen and (max-width: 430px) {
+        padding: 0;
+
+        justify-content: center;
+    }
 }
 
 .buttonsContainer {
@@ -50,4 +61,16 @@
             transform: translate(.5px, 1px);
         }
     }
+
+    @media screen and (max-width: 430px) {
+        display: none;
+    }
+}
+
+$imgSize: 3.5rem;
+
+.imgContainer {
+    display: flex;
+    width: $imgSize;
+    height: $imgSize;
 }

@@ -7,7 +7,7 @@ import { ContactUS } from "@/containers/home/ContactUs";
 import { Projects } from "@/containers/home/Projects";
 
 export default function Home() {
-  redirect('coming-soon');
+  // redirect('coming-soon');
   return (
     <>
       <Header />
