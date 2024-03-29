@@ -3,6 +3,8 @@ $height: calc(100vh - var(--header-height));
 .container {
     padding: 0 4rem;
 
+    background-color: var(--blue-50);
+
     position: relative;
 
     display: flex;
@@ -11,6 +13,8 @@ $height: calc(100vh - var(--header-height));
     justify-content: center;
 
     height: $height;
+
+    z-index: 4;
 }
 
 .row {
@@ -91,7 +95,7 @@ $height: calc(100vh - var(--header-height));
     height: 100%;
 
     position: relative;
-    bottom: 0;
+    bottom: 1.5rem;
 
     z-index: 0;
 }
