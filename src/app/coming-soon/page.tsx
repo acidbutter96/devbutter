@@ -1,8 +1,6 @@
-import Image from "next/image";
 import styles from "./page.module.scss";
-import { Header } from "@/components/Header"
 import { RollerContainer } from "@/components/RollerContainer";
-import { ComingSoonComponent } from "@/components/ComingSoonComponent";
+import { ComingSoonComponent } from "@/containers/coming-soon-page/ComingSoonComponent";
 
 export default function ComingSoon() {
   return (
