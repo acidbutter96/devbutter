@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "../styles/global.scss";
 
-const roboto = Roboto({
+export const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   style: ["normal"],
-  subsets: ["latin"]
+  subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

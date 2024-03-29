@@ -53,13 +53,7 @@ export const Projects = (): React.JSX.Element => {
                     </div>
                 </div>
             </div>
-            <div id="load-button" className={styles.loadBtnContainer}>
-                <div id="btn-container">
-                    <button id="load-more">
-                        load more
-                    </button>
-                </div>
-            </div>
+            
         </div>
     )
 }

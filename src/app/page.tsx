@@ -5,6 +5,7 @@ import { DevButter } from "@/containers/home/DevButter";
 import { redirect } from "next/navigation";
 import { ContactUS } from "@/containers/home/ContactUs";
 import { Projects } from "@/containers/home/Projects";
+import { Experience } from "@/containers/home/Experience";
 
 export default function Home() {
   // redirect('coming-soon');
@@ -15,6 +16,7 @@ export default function Home() {
         <RollerContainer isComingSoon={false}>
           <DevButter />
           <Projects />
+          <Experience />
           <ContactUS />
         </RollerContainer>
       </main>
