@@ -90,7 +90,7 @@ const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
     return <div className={styles.carouselContainer}>
         <Carousel
             responsive={responsive}
-            swipeable={false}
+            swipeable={true}
             draggable
             ssr={true} // means 
             infinite
