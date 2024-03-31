@@ -13,7 +13,7 @@ interface StacksInterface {
     src: string;
 }
 
-const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
+const StackCarousel = ({ images }: { images: object }): React.JSX.Element => {
     const [stacks, setStacks] = useState<StacksInterface[]>([]);
 
     const fetchData = async (directory: string, exceptions: { rule: string, new: string }[] | null = null): Promise<StackListResponse[]> => {
@@ -122,4 +122,4 @@ const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
     </div>
 }
 
-export default CarouselBuilder
+export default StackCarousel
