@@ -1,0 +1,36 @@
+.container {
+    position: absolute;
+
+    bottom: 0;
+    right: 0;
+
+    height: 5rem;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+
+    padding: 0 1rem;
+
+    .textRow {
+        height: 4rem;
+        display: flex;
+
+        align-items: center;
+
+        position: relative;
+
+        span {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%;
+
+            img {
+                width: 60%
+            }
+        }
+    }
+}

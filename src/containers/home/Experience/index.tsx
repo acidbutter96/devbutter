@@ -2,7 +2,6 @@
 
 import styles from "./styles.module.scss";
 import Image from "next/image";
-import { useState } from "react";
 import StackCarousel from "./StackCarousel";
 
 export const Experience = (): React.JSX.Element => {
@@ -36,7 +35,7 @@ export const Experience = (): React.JSX.Element => {
             </div>
             <div className={styles.thirdRow}>
                 <div className={styles.carouselContainer}>
-                    <StackCarousel images={{}}/>
+                    <StackCarousel />
                 </div>
             </div>
 

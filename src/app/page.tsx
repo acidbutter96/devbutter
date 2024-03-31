@@ -3,7 +3,7 @@ import { Header } from "@/components/Header"
 import { RollerContainer } from "@/components/RollerContainer";
 import { DevButter } from "@/containers/home/DevButter";
 import { redirect } from "next/navigation";
-import { ContactUS } from "@/containers/home/ContactUs";
+import { GetInTouch } from "@/containers/home/GetInTouch";
 import { Projects } from "@/containers/home/Projects";
 import { Experience } from "@/containers/home/Experience";
 
@@ -17,7 +17,7 @@ export default function Home() {
           <DevButter />
           <Projects />
           <Experience />
-          <ContactUS />
+          <GetInTouch />
         </RollerContainer>
       </main>
     </>
