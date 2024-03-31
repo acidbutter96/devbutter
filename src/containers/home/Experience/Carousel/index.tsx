@@ -93,12 +93,13 @@ const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
             swipeable={false}
             draggable
             ssr={true} // means 
+            infinite
+            keyBoardControl={true}
+            minimumTouchDrag={80}
             arrows={false}
-            infinite={true}
             focusOnSelect={false}
             autoPlay
             autoPlaySpeed={4000}
-            keyBoardControl={true}
             customTransition="all 1s linear"
             transitionDuration={1}
             containerClass={styles.carouselContainer}
