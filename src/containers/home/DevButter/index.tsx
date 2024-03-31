@@ -21,7 +21,7 @@ export const DevButter = (): React.JSX.Element => {
                 <div id="image-container" className={styles.secondColumn}>
                     <div className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/manholdingcomputer.svg" alt="" width={10} height={10} />
+                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={10} height={10} />
                         </div>
                     </div>
                 </div>

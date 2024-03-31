@@ -1,8 +1,73 @@
 import Carousel from "react-multi-carousel";
 import styles from "./styles.module.scss";
 import "react-multi-carousel/lib/styles.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { StackListResponse } from "@/pages/api/stackList";
+import Image from "next/image";
+// import { useEffect, useState } from "react";
+
+interface StacksInterface {
+    title: string;
+    link?: string;
+    src: string;
+}
 
 const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
+    const [stacks, setStacks] = useState<StacksInterface[]>([]);
+
+    const fetchData = async (directory: string, exceptions: { rule: string, new: string }[] | null = null): Promise<StackListResponse[]> => {
+        try {
+            const response = await axios.post<StackListResponse[]>(
+                '/api/stackList', { directory, exceptions }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        const directory: string = "./public/static/images/stacks/"
+        fetchData(directory, [
+            {
+                rule: "dbeaver",
+                new: "dbeaver",
+            },
+            {
+                rule: "aws",
+                new: "AWS",
+            },
+            {
+                rule: "devops",
+                new: "DevOps",
+            },
+            {
+                rule: "fastapi",
+                new: "FastAPI",
+            },
+            {
+                rule: "mysql",
+                new: "MySQL",
+            },
+            {
+                rule: "php",
+                new: "PHP",
+            },
+            {
+                rule: "python_poetry",
+                new: "Poetry",
+            },
+        ]).then((res): any => {
+            console.log("aqui o grande erro", res);
+            setStacks(res);
+        });
+    }, []);
+
     const responsive = {
         superLargeDesktop: {
             // the naming can be any, depends on you.
@@ -26,26 +91,32 @@ const CarouselBuilder = ({ images }: { images: object }): React.JSX.Element => {
         <Carousel
             responsive={responsive}
             swipeable={false}
-            draggable={true}
+            draggable
             ssr={true} // means 
             arrows={false}
             infinite={true}
-            // autoPlay={this.props.deviceType !== "mobile" ? true : false}
-            autoPlaySpeed={1000}
+            focusOnSelect={false}
+            autoPlay
+            autoPlaySpeed={4000}
             keyBoardControl={true}
-            customTransition="all .5"
-            transitionDuration={500}
+            customTransition="all 1s linear"
+            transitionDuration={1}
             containerClass={styles.carouselContainer}
-            // deviceType={this.props.deviceType}
             itemClass={styles.carouselItem}
         >
-            <div>Item 1</div>
-            <div>Item 2</div>
-            <div>Item 3</div>
-            <div>Item 4</div>
-            <div>Item 5</div>
-            <div>Item 6</div>
-            <div>Item 7</div>
+            {
+                !!stacks.length ? stacks.map((stack, index) => <div key={index} >
+                    <div className={styles.skillImage}>
+                        <Image
+                            src={stack.src}
+                            alt={stack.title}
+                            width={0}
+                            height={0}
+                            title={stack.title}
+                        />
+                    </div>
+                </div>) : <></>
+            }
         </Carousel>
     </div>
 }

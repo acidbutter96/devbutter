@@ -76,7 +76,7 @@ export const ComingSoonComponent = (): React.JSX.Element => {
                 <div id="image-container" className={styles.secondColumn}>
                     <div className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" />
+                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" />
                             {/* <Image src="/person.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" /> */}
                         </div>
                     </div>

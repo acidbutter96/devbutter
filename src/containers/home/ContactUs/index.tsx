@@ -21,7 +21,7 @@ export const ContactUS = (): React.JSX.Element => {
                 <div id="image-container" className={styles.secondColumn}>
                     <div className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} />
+                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} />
                         </div>
                     </div>
                 </div>
