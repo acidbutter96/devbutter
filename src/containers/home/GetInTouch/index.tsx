@@ -3,8 +3,23 @@
 import Footer from '@/components/Footer';
 import styles from './styles.module.scss';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export const GetInTouch = (): React.JSX.Element => {
+    const [bgCounter, setBgCounter ] = useState<number>(1);
+
+    useEffect(()=>{
+        const timeout = setTimeout(() => {
+            if (bgCounter == 4) {
+                setBgCounter(1);
+                console.log("dfemonionadnoiasd")
+            } else {
+                setBgCounter(bgCounter + 1);
+            }
+        }, 50);
+
+        return () => clearTimeout(timeout);
+    },[bgCounter])
 
     return (
         <div id="getInTouch" className={styles.container}>
@@ -14,8 +29,8 @@ export const GetInTouch = (): React.JSX.Element => {
                 </div>
             </div>
             <div className={styles.row}>
-                <form action="" method="post">
-                    <div className={styles.contactFormColumn}>
+                <div className={styles.contactFormColumn}>
+                    <form action="" method="post">
                         <div className={styles.row}>
                             <input type="text" />
                         </div>
@@ -35,8 +50,8 @@ export const GetInTouch = (): React.JSX.Element => {
                                 <input type="text" />
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
                 <div className={styles.textColumn}>
                     <div className={styles.titleRow}>
                         <h3>Ready to <span className={styles.pinkText}>Hustle!</span></h3>
@@ -66,6 +81,18 @@ export const GetInTouch = (): React.JSX.Element => {
                 </div>
             </div>
             <Footer />
+            <div className={`${styles.backgroundImage}`}>
+                <Image src={`/static/images/vectorField${bgCounter}.svg`} alt="" width={0} height={0}/>
+            </div>
+            {/* <div className={`${styles.backgroundImage} ${styles.hidden}`}>
+                <Image src="/static/images/vectorField2.svg" alt="" width={0} height={0} />
+            </div>
+            <div className={`${styles.backgroundImage} ${styles.hidden}`}>
+                <Image src="/static/images/vectorField3.svg" alt="" width={0} height={0}/>
+            </div>
+            <div className={`${styles.backgroundImage} ${styles.hidden}`}>
+                <Image src="/static/images/vectorField4.svg" alt="" width={0} height={0}/>
+            </div> */}
         </div>
     )
 }

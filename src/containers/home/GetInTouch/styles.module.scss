@@ -13,11 +13,27 @@ $projectFontSize: 1.3125rem;
     align-items: flex-start;
     justify-content: flex-start;
 
-    min-height: 100vh;
+    height: 100vh;
 
     background-color: var(--blue-50);
 
     z-index: 3;
+
+    .backgroundImage {
+        position: absolute;
+
+        height: 100%;
+        width: 100vw;
+
+        bottom: 0rem;
+        left: 0;
+
+        z-index: 0;
+
+        .hidden {
+            display: none;
+        }
+    }
 }
 
 .row {
@@ -25,6 +41,11 @@ $projectFontSize: 1.3125rem;
     flex-direction: row;
 
     width: 100%;
+    z-index: 4;
+
+    .halfRow {
+        width: 50%;
+    }
 }
 
 .firstRow {
@@ -96,4 +117,35 @@ $projectFontSize: 1.3125rem;
     }
 }
 
+.contactFormColumn {
+    input {
+        background-color: var(--green-500);
+    }
+}
 
+$mediaIconSize: 3rem;
+
+.textColumn {
+    .pinkText {
+        color: var(--pink-50);
+    }
+    .titleRow {
+        font-family: Roboto;
+    }
+
+    .textRow {
+        font-family: Roboto;
+    }
+
+    .socialMediaRow {
+        display: flex;
+        gap: .5rem;
+
+        .socialMediaIcon {
+            display: flex;
+
+            height: $mediaIconSize;
+            width: $mediaIconSize;
+        }
+    }
+}
