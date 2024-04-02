@@ -4,11 +4,12 @@ import Footer from '@/components/Footer';
 import styles from './styles.module.scss';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import Input from '@/components/Input';
 
 export const GetInTouch = (): React.JSX.Element => {
-    const [bgCounter, setBgCounter ] = useState<number>(1);
+    const [bgCounter, setBgCounter] = useState<number>(1);
 
-    useEffect(()=>{
+    useEffect(() => {
         const timeout = setTimeout(() => {
             if (bgCounter == 4) {
                 setBgCounter(1);
@@ -19,7 +20,7 @@ export const GetInTouch = (): React.JSX.Element => {
         }, 50);
 
         return () => clearTimeout(timeout);
-    },[bgCounter])
+    }, [bgCounter])
 
     return (
         <div id="getInTouch" className={styles.container}>
@@ -32,22 +33,22 @@ export const GetInTouch = (): React.JSX.Element => {
                 <div className={styles.contactFormColumn}>
                     <form action="" method="post">
                         <div className={styles.row}>
-                            <input type="text" />
+                            <Input name={"teste"} type={"text"}/>
                         </div>
                         <div className={styles.row}>
-                            <input type="text" />
+                            <Input name={"teste"} type={"text"}/>
                         </div>
                         <div className={styles.row}>
                             <div className={styles.halfRow}>
-                                <input type="text" />
+                                <Input name={"teste"} type={"text"}/>
                             </div>
                             <div className={styles.halfRow}>
-                                <input type="text" />
+                                <Input name={"teste"} type={"text"}/>
                             </div>
                         </div>
                         <div className={styles.row}>
                             <div className={styles.subjectContainer}>
-                                <input type="text" />
+                                <Input name={"teste"} type={"textarea"}/>
                             </div>
                         </div>
                     </form>
@@ -82,7 +83,7 @@ export const GetInTouch = (): React.JSX.Element => {
             </div>
             <Footer />
             <div className={`${styles.backgroundImage}`}>
-                <Image src={`/static/images/vectorField${bgCounter}.svg`} alt="" width={0} height={0}/>
+                <Image src={`/static/images/vectorField${bgCounter}.svg`} alt="" width={0} height={0} />
             </div>
             {/* <div className={`${styles.backgroundImage} ${styles.hidden}`}>
                 <Image src="/static/images/vectorField2.svg" alt="" width={0} height={0} />
