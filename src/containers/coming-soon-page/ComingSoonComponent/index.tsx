@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { IFileNames } from '@/services/filesService/interfaces';
 
 export const ComingSoonComponent = (): React.JSX.Element => {
-    const directory: string = "public/static/images/aliens/"
+    const directory: string = "./public/static/images/aliens/"
     const { getFileNames } = useNextApi()
 
     const [currentWelcome, setCurrentWelcome] = useState<string>("vem aí")

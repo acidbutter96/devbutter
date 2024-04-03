@@ -22,7 +22,7 @@ export interface StackListResponse {
 }
 
 export default async function handler(req: StackListRequest, res: NextApiResponse<StackListResponse | {}>) {
-    let fileDirectory: string = "public/static/images/stacks/";
+    let fileDirectory: string = "./public/static/images/stacks/";
     let fileExceptions: StackListRequest["body"]["exceptions"] = [];
 
     if (req.method == "POST") {
