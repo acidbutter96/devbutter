@@ -12,16 +12,39 @@ export const ComingSoonComponent = (): React.JSX.Element => {
 
     const [currentWelcome, setCurrentWelcome] = useState<string>("vem aí")
     const [aliens, setAliens] = useState<IFileNames[]>([])
-    const [alienIndex, setAlienIndex] = useState<number>(0);
-
+    const [alienIndex, setAlienIndex] = useState<number>(0)
 
     useEffect(() => {
-        getFileNames(directory, null).then((res): void => {
-            setAliens(res)
-        })
+        setAliens([
+            {
+                "title": "Alien_having_a_big_idea",
+                "link": "/",
+                "src": "/static/images/aliens/alien_having_a_big_idea.svg"
+            },
+            {
+                "title": "Alien_using_computer",
+                "link": "/",
+                "src": "/static/images/aliens/alien_using_computer.svg"
+            },
+            {
+                "title": "Aliens_planning",
+                "link": "/",
+                "src": "/static/images/aliens/aliens_planning.svg"
+            },
+            {
+                "title": "Analytical_alien",
+                "link": "/",
+                "src": "/static/images/aliens/analytical_alien.svg"
+            },
+            {
+                "title": "Juggler_alien",
+                "link": "/",
+                "src": "/static/images/aliens/juggler_alien.svg"
+            }
+        ])
     }, [])
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         setAlienIndex(Math.round(Math.random() * aliens.length))
     }, [aliens])
 

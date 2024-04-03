@@ -157,8 +157,9 @@ $height: calc(100vh - 6rem);
     
         .imageContainer {
             position: absolute;
-            bottom: -1rem;
-            left: 2rem;
+
+            bottom: 2rem;
+            left: 24rem;
             display: flex;
         
             max-width: 56rem;
