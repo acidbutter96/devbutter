@@ -158,16 +158,17 @@ $height: calc(100vh - 6rem);
         .imageContainer {
             position: absolute;
             bottom: -1rem;
-            left: .4rem;
+            left: 2rem;
             display: flex;
         
             width: 56rem;
+            max-height: 45rem;
 
         }
-        @media screen and (max-width: 820px) and (max-width: 1102px) {            
+        @media screen and (min-width: 820px) and (max-width: 1102px) {            
             .imageContainer {
                 bottom: 0rem;
-                left: -19rem;
+                left: -.5rem;
                 
                 width: 40rem;
             }
@@ -186,10 +187,10 @@ $height: calc(100vh - 6rem);
             width: 100%;
 
             .imageContainer {
-                bottom: 0rem;
-                left: -11rem;
+                bottom: 1rem;
+                left: -12rem;
                 
-                width: 35rem;
+                width: 40rem;
             }
         }
     }

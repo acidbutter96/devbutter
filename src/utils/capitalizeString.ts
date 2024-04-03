@@ -1,4 +1,4 @@
-export const renameFileToShow = (name: string, exceptions: {rule: string; new: string}[] = []): string => {
+export const capitalizeString = (name: string, exceptions: {rule: string; new: string}[] = []): string => {
     let response: string = "";
     const responseArray: string[] = name.split(".");
 

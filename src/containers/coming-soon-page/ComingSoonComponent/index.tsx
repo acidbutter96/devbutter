@@ -1,14 +1,31 @@
 "use client"
 
+import { useNextApi } from '@/contexts/api';
 import styles from './styles.module.scss';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { IFileNames } from '@/services/filesService/interfaces';
 
 export const ComingSoonComponent = (): React.JSX.Element => {
-    const imageDim = [880, 540]
-    const [multiple, setMultiple] = useState<number>(1.9);
-    const [screenWidth, setScreenWidth] = useState<number | null>(null)
+    const directory: string = "./public/static/images/aliens/"
+    const { getFileNames } = useNextApi()
+
     const [currentWelcome, setCurrentWelcome] = useState<string>("vem aí")
+    const [aliens, setAliens] = useState<IFileNames[]>([])
+    const [alienIndex, setAlienIndex] = useState<number>(0);
+
+
+    useEffect(() => {
+        getFileNames(directory, null).then((res): void => {
+            setAliens(res)
+        })
+    }, [])
+    
+    useEffect(()=>{
+        setAlienIndex(Math.round(Math.random() * aliens.length))
+    }, [aliens])
+
+    console.log(aliens[alienIndex])
 
     const welcomeArray: string[] = [
         "vem aí",
@@ -34,32 +51,13 @@ export const ComingSoonComponent = (): React.JSX.Element => {
     ]
 
     useEffect(() => {
-        const updateScreenWidth = () => {
-            setScreenWidth(window.innerWidth)
-        };
-        window.addEventListener('resize', updateScreenWidth);
-        updateScreenWidth();
-        return () => {
-            window.removeEventListener('resize', updateScreenWidth);
-        };
-    }, [welcomeArray]);
-
-    useEffect(() => {
-        if (screenWidth && screenWidth <= 414) {
-            setMultiple(1)
-        } else {
-            setMultiple(1.9)
-        }
-    }, [screenWidth])
-
-    useEffect(() => {
         const timeout = setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * welcomeArray.length);
-            setCurrentWelcome(welcomeArray[randomIndex]);
-        }, 2000);
+            const randomIndex = Math.floor(Math.random() * welcomeArray.length)
+            setCurrentWelcome(welcomeArray[randomIndex])
+        }, 2000)
 
-        return () => clearTimeout(timeout);
-    }, [welcomeArray]);
+        return () => clearTimeout(timeout)
+    }, [welcomeArray])
 
     return (
         <div id="devbutter" className={styles.container}>
@@ -77,8 +75,12 @@ export const ComingSoonComponent = (): React.JSX.Element => {
                     </div>
                     <div id="image-container" className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} />
-                            {/* <Image src="/person.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" /> */}
+                            <Image
+                                src={aliens[alienIndex]?.src}
+                                alt={aliens[alienIndex]?.title}
+                                width={0}
+                                height={0}
+                            />
                         </div>
                     </div>
                 </div>

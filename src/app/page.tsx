@@ -12,7 +12,6 @@ export default function Home() {
   // redirect('coming-soon');
   return (
     <>
-      <ApiContextProvider>
         <Header />
         <main className={styles.mainContainer}>
           <RollerContainer isComingSoon={false}>
@@ -22,7 +21,6 @@ export default function Home() {
             <GetInTouch />
           </RollerContainer>
         </main>
-      </ApiContextProvider>
     </>
   );
 }

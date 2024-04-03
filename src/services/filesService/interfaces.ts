@@ -1,4 +1,4 @@
-export interface StacksInterface {
+export interface IFileNames {
     title: string;
     link?: string;
     src: string;

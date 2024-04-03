@@ -1,11 +1,11 @@
-import Carousel from "react-multi-carousel";
-import styles from "./styles.module.scss";
-import "react-multi-carousel/lib/styles.css";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { useNextApi } from "@/contexts/api";
+import Carousel from "react-multi-carousel"
+import styles from "./styles.module.scss"
+import "react-multi-carousel/lib/styles.css"
+import { useEffect, useState } from "react"
+import Image from "next/image"
+import { useNextApi } from "@/contexts/api"
 
-interface StacksInterface {
+interface IFileNames {
     title: string;
     link?: string;
     src: string;
@@ -13,7 +13,7 @@ interface StacksInterface {
 
 const StackCarousel = (): React.JSX.Element => {
     const { getFileNames } = useNextApi()
-    const [stacks, setStacks] = useState<StacksInterface[]>([]);
+    const [stacks, setStacks] = useState<IFileNames[]>([])
 
     useEffect(() => {
         const directory: string = "./public/static/images/stacks/"
@@ -48,8 +48,8 @@ const StackCarousel = (): React.JSX.Element => {
             },
         ]).then((res): any => {
             setStacks(res);
-        });
-    }, []);
+        })
+    }, [])
 
     const responsive = {
         superLargeDesktop: {

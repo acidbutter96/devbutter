@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchFilesInDirectory } from "@/services/stacksService";
+import { fetchFilesInDirectory } from "@/services/filesService";
 import React, { createContext, useContext } from "react"
 import { IApiContext, IGetStacks } from "./interfaces";
 

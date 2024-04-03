@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-// import fileList from "@/utils/checkDirectoryFiles"
-import path from "path";
-import { pathIsValid } from "@/errors/pages/api/fileList";
-import fs from "fs";
-import { renameFileToShow } from "@/utils/renameFileToShow";
+import { NextApiRequest, NextApiResponse } from "next"
+import path from "path"
+import { pathIsValid } from "@/errors/pages/api/fileList"
+import fs from "fs"
+import { capitalizeString } from "@/utils/capitalizeString"
 
 interface StackListRequest extends NextApiRequest {
     body: {
@@ -39,23 +38,27 @@ export default async function handler(req: StackListRequest, res: NextApiRespons
         const directoryPath = path.resolve(process.cwd(), fileDirectory);
         
         fs.readdir(directoryPath, (err, files) => {
-            let response: StackListResponse[] = [];
+            let response: StackListResponse[] = []
             if (err) {
                 console.error('Error reading directory:', err, process.cwd());
-                return;
+                return
             }
 
             const fileList = files.filter(file => {
                 return fs.statSync(path.join(directoryPath, file)).isFile();
-            });
+            })
+
+            if (fileDirectory.includes("./public")) {
+                fileDirectory = fileDirectory.split("./public")[1]??fileDirectory
+            }
 
             fileList.forEach((file) => {
                 response.push({
-                    title: renameFileToShow(file, fileExceptions),
+                    title: capitalizeString(file, fileExceptions),
                     link: "/",
-                    src: `/static/images/stacks/${file}`
-                });
-            });
+                    src: `${fileDirectory}${file}`
+                })
+            })
 
             res.status(200).json(response);
         });
