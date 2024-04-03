@@ -8,7 +8,7 @@ import { Projects } from "@/containers/home/Projects";
 import { Experience } from "@/containers/home/Experience";
 
 export default function Home() {
-  // redirect('coming-soon');
+  redirect('coming-soon');
   return (
     <>
       <Header />

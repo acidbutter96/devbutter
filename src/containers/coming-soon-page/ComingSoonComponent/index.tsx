@@ -8,9 +8,10 @@ export const ComingSoonComponent = (): React.JSX.Element => {
     const imageDim = [880, 540]
     const [multiple, setMultiple] = useState<number>(1.9);
     const [screenWidth, setScreenWidth] = useState<number | null>(null)
-    const [currentWelcome, setCurrentWelcome] = useState<string>("coming soon")
+    const [currentWelcome, setCurrentWelcome] = useState<string>("vem aí")
 
     const welcomeArray: string[] = [
+        "vem aí",
         "coming soon",
         "próximamente",
         "bientôt disponible",
@@ -63,20 +64,20 @@ export const ComingSoonComponent = (): React.JSX.Element => {
     return (
         <div id="devbutter" className={styles.container}>
             <div id="row1" className={styles.row}>
-                <div id="text-container" className={styles.firstColumn}>
-                    <div className={styles.titleContainer}>
-                        <h1 className={styles.title}>
-                            DevButter!
-                        </h1>
-                        <p className={styles.text}>
-                            {currentWelcome}
-                        </p>
+                <div className={styles.firstRow}>
+                    <div id="text-container" className={styles.firstColumn}>
+                        <div className={styles.titleContainer}>
+                            <h1 className={styles.title}>
+                                DevButter!
+                            </h1>
+                            <p className={styles.text}>
+                                {currentWelcome}
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div id="image-container" className={styles.secondColumn}>
-                    <div className={styles.secondColumn}>
+                    <div id="image-container" className={styles.secondColumn}>
                         <div className={styles.imageContainer}>
-                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" />
+                            <Image src="/static/images/manholdingcomputer.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} />
                             {/* <Image src="/person.svg" alt="" width={imageDim[0] * multiple} height={imageDim[1] * multiple} layout="responsive" /> */}
                         </div>
                     </div>
