@@ -2,10 +2,8 @@ import Carousel from "react-multi-carousel";
 import styles from "./styles.module.scss";
 import "react-multi-carousel/lib/styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { StackListResponse } from "@/pages/api/stackList";
 import Image from "next/image";
-// import { useEffect, useState } from "react";
+import { useNextApi } from "@/contexts/api";
 
 interface StacksInterface {
     title: string;
@@ -14,26 +12,12 @@ interface StacksInterface {
 }
 
 const StackCarousel = (): React.JSX.Element => {
+    const { getFileNames } = useNextApi()
     const [stacks, setStacks] = useState<StacksInterface[]>([]);
-
-    const fetchData = async (directory: string, exceptions: { rule: string, new: string }[] | null = null): Promise<StackListResponse[]> => {
-        try {
-            const response = await axios.post<StackListResponse[]>(
-                '/api/stackList', { directory, exceptions }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            return [];
-        }
-    };
 
     useEffect(() => {
         const directory: string = "./public/static/images/stacks/"
-        fetchData(directory, [
+        getFileNames(directory, [
             {
                 rule: "dbeaver",
                 new: "dbeaver",
@@ -63,7 +47,6 @@ const StackCarousel = (): React.JSX.Element => {
                 new: "Poetry",
             },
         ]).then((res): any => {
-            console.log("aqui o grande erro", res);
             setStacks(res);
         });
     }, []);
@@ -123,3 +106,4 @@ const StackCarousel = (): React.JSX.Element => {
 }
 
 export default StackCarousel
+

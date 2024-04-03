@@ -6,20 +6,23 @@ import { redirect } from "next/navigation";
 import { GetInTouch } from "@/containers/home/GetInTouch";
 import { Projects } from "@/containers/home/Projects";
 import { Experience } from "@/containers/home/Experience";
+import ApiContextProvider from "@/contexts/api";
 
 export default function Home() {
-  redirect('coming-soon');
+  // redirect('coming-soon');
   return (
     <>
-      <Header />
-      <main className={styles.mainContainer}>
-        <RollerContainer isComingSoon={false}>
-          <DevButter />
-          <Projects />
-          <Experience />
-          <GetInTouch />
-        </RollerContainer>
-      </main>
+      <ApiContextProvider>
+        <Header />
+        <main className={styles.mainContainer}>
+          <RollerContainer isComingSoon={false}>
+            <DevButter />
+            <Projects />
+            <Experience />
+            <GetInTouch />
+          </RollerContainer>
+        </main>
+      </ApiContextProvider>
     </>
   );
 }
