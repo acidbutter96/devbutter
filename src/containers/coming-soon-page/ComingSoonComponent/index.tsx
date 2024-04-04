@@ -100,8 +100,8 @@ export const ComingSoonComponent = (): React.JSX.Element => {
                             <Image
                                 src={aliens[alienIndex]?.src}
                                 alt={aliens[alienIndex]?.title}
-                                width={100}
-                                height={100}
+                                width={60}
+                                height={50}
                             />
                         </div>
                     </div>
