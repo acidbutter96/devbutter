@@ -57,7 +57,6 @@ export const ComingSoonComponent = (): React.JSX.Element => {
         "bientôt disponible",
         "bald verfügbar",
         "presto disponibile",
-        "em breve",
         "binnenkort beschikbaar",
         "скоро",
         "即将推出",
@@ -101,8 +100,8 @@ export const ComingSoonComponent = (): React.JSX.Element => {
                             <Image
                                 src={aliens[alienIndex]?.src}
                                 alt={aliens[alienIndex]?.title}
-                                width={0}
-                                height={0}
+                                width={100}
+                                height={100}
                             />
                         </div>
                     </div>

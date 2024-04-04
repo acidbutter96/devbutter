@@ -165,6 +165,10 @@ $height: calc(100vh - 6rem);
             max-width: 56rem;
             max-height: 45rem;
 
+            img {
+                position: relative;
+            }
+
         }
         @media screen and (min-width: 820px) and (max-width: 1102px) {            
             .imageContainer {
