@@ -11,16 +11,19 @@ html {
 }
 
 :root {
-    --blue--10: #28B1BE;
     --blue-100: #141628;
     --blue-50: #1B1E32;
+    --blue--10: #28B1BE;
 
+    --pink-500: #FF007F;
     --pink-50: #F64C6F;
     --pink-10: #F8A0B6;
 
     --white: #FFF;
 
     --green-500: #04D361;
+    --green-50: #79e59b;
+    --green-10: #A3E3B0;
 
     --header-height: 6rem;
 
@@ -46,13 +49,13 @@ body {
 }
 
 body, input, textarea, button {
-    font: 500 1rem Roboto, sans-serif;
+    font: 500 1rem var(--font-roboto);
     color: var(--white);
 }
 
 h1,h2,h3,h4,h5,h6{
     font-weight: 600;
-    font-family: Roboto, sans-serif;
+    font-family: var(--font-roboto);
     color: var(--white);
 }
 

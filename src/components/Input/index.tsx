@@ -5,6 +5,7 @@ interface InputInterface {
     about?: string | "" | undefined;
     alt?: string | "" | undefined;
     name?: string | "" | undefined;
+    placeholder?: string | "";
     type: "text" | "textarea";
     onChange?: (event: ChangeEvent) => void;
     onClick?: (event: any) => void;
@@ -16,11 +17,17 @@ const Input = (
         alt="",
         name="",
         type="text",
+        placeholder="",
         onChange,
         onClick,
     }:InputInterface): React.JSX.Element => {
     return <div className={styles.container}>
-        <input type={type} name={name} about={""} alt={""}
+        <input
+            type={type}
+            name={name}
+            about={about}
+            alt={alt}
+            placeholder={placeholder}
             onChange={(event)=>{
                 if(onChange){
                     onChange(event);

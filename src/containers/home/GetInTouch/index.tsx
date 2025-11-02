@@ -30,53 +30,55 @@ export const GetInTouch = (): React.JSX.Element => {
                 </div>
             </div>
             <div className={styles.row}>
-                <div className={styles.contactFormColumn}>
-                    <form action="" method="post">
-                        <div className={styles.row}>
-                            <Input name={"teste"} type={"text"}/>
-                        </div>
-                        <div className={styles.row}>
-                            <Input name={"teste"} type={"text"}/>
-                        </div>
-                        <div className={styles.row}>
-                            <div className={styles.halfRow}>
-                                <Input name={"teste"} type={"text"}/>
+                <div className={styles.secondRow}>
+                    <div className={styles.contactFormColumn}>
+                        <form action="" method="post">
+                            <div className={styles.row}>
+                                <Input name={"subject"} type={"text"} placeholder={"subject"}/>
                             </div>
-                            <div className={styles.halfRow}>
-                                <Input name={"teste"} type={"text"}/>
+                            <div className={styles.row}>
+                                <Input name={"name"} type={"text"} placeholder={"name"}/>
                             </div>
-                        </div>
-                        <div className={styles.row}>
-                            <div className={styles.subjectContainer}>
-                                <Input name={"teste"} type={"textarea"}/>
+                            <div className={styles.row}>
+                                <div className={styles.halfRow}>
+                                    <Input name={"telephone"} type={"text"} placeholder={"telephone"}/>
+                                </div>
+                                <div className={styles.halfRow}>
+                                    <Input name={"email"} type={"text"} placeholder={"email"}/>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
-                <div className={styles.textColumn}>
-                    <div className={styles.titleRow}>
-                        <h3>Ready to <span className={styles.pinkText}>Hustle!</span></h3>
+                            <div className={styles.row}>
+                                <div className={styles.subjectContainer}>
+                                    <Input name={"message"} type={"textarea"} placeholder={"message"} />
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div className={styles.textRow}>
-                        <p>
-                            Dolore et dolore ut id id sint deserunt cupidatat ullamco aute culpa aliquip exercitation dolore. Amet eu reprehenderit magna sunt irure cupidatat reprehenderit. Nisi et nulla consectetur proident dolore enim. Exercitation esse labore proident quis magna. Nostrud consectetur non eiusmod anim irure duis pariatur esse ipsum. Reprehenderit dolor ullamco pariatur tempor deserunt.
-                        </p>
-                        <p>
-                            Occaecat magna reprehenderit ullamco commodo in sit cupidatat consectetur magna. Velit dolor velit sint ipsum Lorem exercitation in velit labore non fugiat. Ea cupidatat nisi irure in ea sit officia id voluptate tempor magna. Elit elit aute qui in ipsum nostrud voluptate ad Lorem irure reprehenderit. Amet non irure ut excepteur eiusmod elit Lorem veniam. Id adipisicing exercitation sit pariatur fugiat adipisicing veniam est.
-                        </p>
-                        <p>
-                            Do minim do exercitation occaecat magna ipsum. Qui pariatur officia voluptate quis quis. Anim proident nisi ad cillum incididunt labore consequat do ullamco.
-                        </p>
-                    </div>
-                    <div className={styles.socialMediaRow}>
-                        <div className={styles.socialMediaIcon}>
-                            <Image src="/static/images/icons/github.svg" alt="" width={30} height={30} />
+                    <div className={styles.textColumn}>
+                        <div className={styles.titleRow}>
+                            <h3>Ready to <span className={styles.pinkText}>Hustle!</span></h3>
                         </div>
-                        <div className={styles.socialMediaIcon}>
-                            <Image src="/static/images/icons/linkedin.svg" alt="" width={30} height={30} />
+                        <div className={styles.textRow}>
+                            <p>
+                                Dolore et dolore ut id id sint deserunt cupidatat ullamco aute culpa aliquip exercitation dolore. Amet eu reprehenderit magna sunt irure cupidatat reprehenderit. Nisi et nulla consectetur proident dolore enim. Exercitation esse labore proident quis magna. Nostrud consectetur non eiusmod anim irure duis pariatur esse ipsum. Reprehenderit dolor ullamco pariatur tempor deserunt.
+                            </p>
+                            <p>
+                                Occaecat magna reprehenderit ullamco commodo in sit cupidatat consectetur magna. Velit dolor velit sint ipsum Lorem exercitation in velit labore non fugiat. Ea cupidatat nisi irure in ea sit officia id voluptate tempor magna. Elit elit aute qui in ipsum nostrud voluptate ad Lorem irure reprehenderit. Amet non irure ut excepteur eiusmod elit Lorem veniam. Id adipisicing exercitation sit pariatur fugiat adipisicing veniam est.
+                            </p>
+                            <p>
+                                Do minim do exercitation occaecat magna ipsum. Qui pariatur officia voluptate quis quis. Anim proident nisi ad cillum incididunt labore consequat do ullamco.
+                            </p>
                         </div>
-                        <div className={styles.socialMediaIcon}>
-                            <Image src="/static/images/icons/instagram.svg" alt="" width={30} height={30} />
+                        <div className={styles.socialMediaRow}>
+                            <div className={styles.socialMediaIcon}>
+                                <Image src="/static/images/icons/github.svg" alt="" width={30} height={30} />
+                            </div>
+                            <div className={styles.socialMediaIcon}>
+                                <Image src="/static/images/icons/linkedin.svg" alt="" width={30} height={30} />
+                            </div>
+                            <div className={styles.socialMediaIcon}>
+                                <Image src="/static/images/icons/instagram.svg" alt="" width={30} height={30} />
+                            </div>
                         </div>
                     </div>
                 </div>

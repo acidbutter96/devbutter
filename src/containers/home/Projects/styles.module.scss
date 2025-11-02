@@ -144,7 +144,7 @@ $projectFontSize: 1.3125rem;
                     justify-content: center;
 
                     h3 {
-                        font-family: "Roboto", sans-serif, arial, helvetica;
+                        font-family: var(--font-roboto);
                         font-weight: 400;
                         font-size: $projectFontSize;
                         color: var(--pink-50);

@@ -52,6 +52,7 @@ $projectFontSize: 1.3125rem;
     display: flex;
 
     padding: 4rem 0 1rem 4rem;
+    padding-bottom: 3rem;
 
     width: 100%;
 
@@ -117,43 +118,110 @@ $projectFontSize: 1.3125rem;
     }
 }
 
+.secondRow {
+    $contactFormPercentage: 45%;
 
-.contactFormColumn {
-    background-color: red;
+    width: 100%;
+
     display: flex;
-    
-    height: 100%;
-    width: 50%;
-    input {
-        background-color: var(--green-500);
-    }
-}
+    flex-direction: row;
 
-
-
-$mediaIconSize: 3rem;
-
-.textColumn {
-    .pinkText {
-        color: var(--pink-50);
-    }
-    .titleRow {
-        font-family: Roboto;
-    }
-
-    .textRow {
-        font-family: Roboto;
-    }
-
-    .socialMediaRow {
+    .contactFormColumn {
         display: flex;
-        gap: .5rem;
 
-        .socialMediaIcon {
+        height: 100%;
+        width: $contactFormPercentage;
+
+        form {
+            width: 100%;
+            height: 100%;
+
+            // background-color: var(--blue-50);
+        }
+
+        input {
+            font-family: var(--font-roboto);
+            font-weight: 800;
+            font-size: 2rem;
+
+            background-color: var(--green-50);
+
+            height: 3rem;
+
+            color: var(--pink-50);
+
+            margin-bottom: .5rem;
+
+            &::placeholder {
+                font-family: var(--font-roboto);
+                font-weight: 800;
+                color: var(--pink-50);
+            }
+
+            /* Neutralize browser autofill/autocomplete styling so it inherits input styles */
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+                box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+                -webkit-text-fill-color: var(--pink-50) !important;
+                -webkit-text-size-adjust: 2rem !important;
+                color: var(--pink-50) !important;
+                opacity: 1 !important;
+                transition: background-color 5000s ease-in-out 0s; /* avoid autofill flash */
+
+            }
+
+            /* Firefox autofill */
+            &:-moz-autofill {
+                box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+                -moz-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+                -webkit-text-fill-color: var(--pink-50) !important;
+                -webkit-text-size-adjust: 2rem !important;
+
+                color: var(--pink-50) !important;
+            }
+        }
+
+        .subjectContainer {
+            width: 100%;
+            input {
+                
+                height: 10rem;
+                width: 100%;
+            }
+        }
+    }
+
+
+    $mediaIconSize: 3rem;
+
+    .textColumn {
+        width: calc(100% - $contactFormPercentage);
+
+        .pinkText {
+            color: var(--pink-50);
+        }
+
+        .titleRow {
+            font-family: var(--font-roboto);
+        }
+
+        .textRow {
+            font-family: var(--font-roboto);
+        }
+
+        .socialMediaRow {
             display: flex;
+            gap: .5rem;
 
-            height: $mediaIconSize;
-            width: $mediaIconSize;
+            .socialMediaIcon {
+                display: flex;
+
+                height: $mediaIconSize;
+                width: $mediaIconSize;
+            }
         }
     }
 }
