@@ -217,11 +217,12 @@ $projectFontSize: 1.3125rem;
 
     .experienceTextContainer {
         display: flex;
-        width: calc(100vw + 100%);
+        width: 60rem;
+
 
         padding: 4rem;
         padding-top: 0;
-        padding-left: 25rem;
+        padding-left: 1rem;
         p {
             font-family: var(--font-roboto);
             font-size: 1.9rem;
@@ -232,11 +233,7 @@ $projectFontSize: 1.3125rem;
             text-wrap: wrap;
             line-height: 2.3rem;
 
-            transition: line-height 1s ease;
-
-            &:hover {
-                line-height: 2.6rem;
-            }
+            width: 105rem;
 
             .greenHighlight {
                 color: var(--green-500);
