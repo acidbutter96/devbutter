@@ -56,17 +56,19 @@ export const GetInTouch = (): React.JSX.Element => {
                     </div>
                     <div className={styles.textColumn}>
                         <div className={styles.titleRow}>
-                            <h3>Ready to <span className={styles.pinkText}>Hustle!</span></h3>
+                            <h3>
+                                Shoot your idea — <span className={styles.pinkText}>we’ll code the magic!</span>
+                            </h3>
                         </div>
                         <div className={styles.textRow}>
                             <p>
-                                Dolore et dolore ut id id sint deserunt cupidatat ullamco aute culpa aliquip exercitation dolore. Amet eu reprehenderit magna sunt irure cupidatat reprehenderit. Nisi et nulla consectetur proident dolore enim. Exercitation esse labore proident quis magna. Nostrud consectetur non eiusmod anim irure duis pariatur esse ipsum. Reprehenderit dolor ullamco pariatur tempor deserunt.
+                                Use the form beside to share your idea with us! 🤓
                             </p>
                             <p>
-                                Occaecat magna reprehenderit ullamco commodo in sit cupidatat consectetur magna. Velit dolor velit sint ipsum Lorem exercitation in velit labore non fugiat. Ea cupidatat nisi irure in ea sit officia id voluptate tempor magna. Elit elit aute qui in ipsum nostrud voluptate ad Lorem irure reprehenderit. Amet non irure ut excepteur eiusmod elit Lorem veniam. Id adipisicing exercitation sit pariatur fugiat adipisicing veniam est.
+                                We specialize in turning ideas into reality — straight from your mind to the web.
                             </p>
                             <p>
-                                Do minim do exercitation occaecat magna ipsum. Qui pariatur officia voluptate quis quis. Anim proident nisi ad cillum incididunt labore consequat do ullamco.
+                                So, what are you thinking of? Tell us!
                             </p>
                         </div>
                         <div className={styles.socialMediaRow}>
