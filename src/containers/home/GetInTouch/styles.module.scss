@@ -205,16 +205,49 @@ $projectFontSize: 1.3125rem;
         }
     }
 
+    /* wrappers and error styling for form validation */
+    .fieldWrapper {
+        width: 100%;
+        display: block;
+
+        /* ensure input inside the Input component gets highlighted via outline when parent has error */
+        input {
+            transition: outline-color 120ms ease, box-shadow 120ms ease;
+            outline: none;
+        }
+    }
+
+    .hasError {
+        input {
+            outline: 2px solid var(--pink-500);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(246,76,111,0.08);
+        }
+    }
+
+    .errorText {
+        color: var(--pink-500);
+        font-family: var(--font-roboto);
+        font-size: 0.875rem;
+        font-weight: 400;
+        margin-top: 0.25rem;
+    }
+
 
     $mediaIconSize: 3rem;
 
     .textColumn {
+        padding-left: 1rem;
         width: calc(100% - $contactFormPercentage);
 
         min-height: 40rem;
 
         .pinkText {
             color: var(--pink-50);
+        }
+
+        .greenText {
+            color: var(--green-50);
         }
 
         .titleRow {
@@ -243,5 +276,60 @@ $projectFontSize: 1.3125rem;
                 width: $mediaIconSize;
             }
         }
+    }
+
+    .sentTextColumn {
+        padding-left: 1rem;
+
+        .pinkText {
+            color: var(--pink-50);
+        }
+
+        .greenText {
+            color: var(--green-50);
+        }
+
+        .titleRow {
+            font-family: var(--font-roboto);
+
+            h3 {
+                font-size: 2rem;
+            }
+        }
+
+        .textRow {
+            font-family: var(--font-roboto);
+            font-size: 1.5rem;
+            font-weight: 100;
+        }
+
+        .socialMediaRow {
+            display: flex;
+            gap: .5rem;
+
+            .socialMediaIcon {
+                display: flex;
+
+                height: $mediaIconSize;
+                width: $mediaIconSize;
+            }
+        }
+    }
+
+    
+}
+
+.successView {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .imageContainer {
+        display: flex;
+        justify-content: center;
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+        
+        width: 30rem;
     }
 }

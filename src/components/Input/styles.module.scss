@@ -2,7 +2,7 @@
     display: flex;
 
     width: 100%;
-    height: 100%;
+    height: auto; /* allow input to size itself, prevents unwanted overflow when parent has no fixed height */
 
     padding: 0 .25rem;
 
@@ -16,9 +16,10 @@
 
         overflow-y: hidden;
 
-        font-family: var(--font-roboto);
-        font-weight: 800;
-        font-size: 2rem;
+    font-family: var(--font-roboto);
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1; /* avoid vertical overflow from computed line-height */
 
         background-color: var(--green-50);
 
@@ -31,6 +32,19 @@
 
         border: none;
         outline: none;
+    }
+
+    /* remove number input spin buttons which can cause visual overflow on some browsers */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        appearance: textfield;
+        -webkit-appearance: textfield;
+        -moz-appearance: textfield; /* hide Firefox number arrows */
     }
 
     /* default single-line input height */
