@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "../styles/global.scss";
 import ApiContextProvider from "@/contexts/api";
+import BackgroundClient from "@/components/BackgroundClient";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -25,6 +26,7 @@ export default function RootLayout({
       <link rel="icon" href="/devbutter.svg" sizes="any" />
       <body className={roboto.className}>
         <ApiContextProvider>
+          <BackgroundClient />
           {children}
         </ApiContextProvider>
         </body>

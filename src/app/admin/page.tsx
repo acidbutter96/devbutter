@@ -144,127 +144,129 @@ export default function AdminPage(): React.JSX.Element {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.wrapper}>
-        <header className={styles.header}>
-          <h1>Admin area</h1>
-          <p>Manage portfolio entries and form submissions in one place.</p>
-        </header>
+    <>
+      <div className={styles.page}>
+        <div className={styles.wrapper}>
+          <header className={styles.header}>
+            <h1>Admin area</h1>
+            <p>Manage portfolio entries and form submissions in one place.</p>
+          </header>
 
-        {!authed ? (
-          <div className={styles.loginLayout}>
-            <section className={`${styles.card} ${styles.loginCard}`}>
-              <h2>Restricted access</h2>
-              <form onSubmit={onLogin} className={styles.form}>
-                <label className={styles.field}>
-                  <span>Email</span>
-                  <input className={styles.input} value={email} onChange={e => setEmail(e.target.value)} type="email" required />
-                </label>
-                <label className={styles.field}>
-                  <span>Password</span>
-                  <input className={styles.input} value={password} onChange={e => setPassword(e.target.value)} type="password" required />
-                </label>
-                <div className={styles.formActions}>
-                  <button className={styles.primaryButton} type="submit" disabled={loading}>Sign in</button>
-                </div>
-                {error && <div className={styles.error} role="alert">{error}</div>}
-              </form>
-            </section>
-
-            <figure className={styles.loginIllustration}>
-              <Image
-                src="/static/images/aliens/juggler_alien.svg"
-                alt="Juggler alien illustration"
-                width={420}
-                height={420}
-                priority
-              />
-            </figure>
-          </div>
-        ) : (
-          <div className={styles.panel}>
-            <div className={styles.panelHeader}>
-              <div>
-                <h2>Admin dashboard</h2>
-                <p>Keep projects and internal content organized.</p>
-              </div>
-              <div className={styles.headerActions}>
-                <button className={styles.secondaryButton} onClick={fetchProjects} disabled={loading}>Refresh projects</button>
-                <button className={styles.ghostButton} onClick={logout}>Logout</button>
-              </div>
-            </div>
-
-            <div className={styles.panelGrid}>
-              <section className={`${styles.card} ${styles.addProject}`}>
-                <div className={styles.sectionHeading}>
-                  <h3>Add project</h3>
-                  <p>Fill in the fields below to publish a new item.</p>
-                </div>
-                <form onSubmit={onAddProject} className={styles.form}>
+          {!authed ? (
+            <div className={styles.loginLayout}>
+              <section className={`${styles.card} ${styles.loginCard}`}>
+                <h2>Restricted access</h2>
+                <form onSubmit={onLogin} className={styles.form}>
                   <label className={styles.field}>
-                    <span>Title</span>
-                    <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} required />
+                    <span>Email</span>
+                    <input className={styles.input} value={email} onChange={e => setEmail(e.target.value)} type="email" required />
                   </label>
                   <label className={styles.field}>
-                    <span>Description</span>
-                    <textarea className={styles.textarea} value={description} onChange={e => setDescription(e.target.value)} />
-                  </label>
-                  <label className={styles.field}>
-                    <span>Link</span>
-                    <input className={styles.input} value={link} onChange={e => setLink(e.target.value)} />
-                  </label>
-                  <label className={styles.field}>
-                    <span>Repo</span>
-                    <input className={styles.input} value={repo} onChange={e => setRepo(e.target.value)} />
+                    <span>Password</span>
+                    <input className={styles.input} value={password} onChange={e => setPassword(e.target.value)} type="password" required />
                   </label>
                   <div className={styles.formActions}>
-                    <button className={styles.primaryButton} type="submit" disabled={loading}>Add</button>
+                    <button className={styles.primaryButton} type="submit" disabled={loading}>Sign in</button>
                   </div>
+                  {error && <div className={styles.error} role="alert">{error}</div>}
                 </form>
-                {error && <div className={styles.error} role="alert">{error}</div>}
               </section>
 
-              <section className={`${styles.card} ${styles.list}`}>
-                <div className={styles.sectionHeading}>
-                  <h3>Published projects</h3>
-                  <p>Quickly review the content that is already live.</p>
-                </div>
-                {loading && <div className={styles.status}>Loading...</div>}
-                {!loading && projects.length === 0 && <div className={styles.status}>No projects found.</div>}
-                <ul className={styles.projectList}>
-                  {projects.map((p, idx) => {
-                    const displayDate = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : null;
-                    return (
-                      <li className={styles.projectItem} key={p._id ?? idx}>
-                        <div className={styles.projectHeader}>
-                          <strong>{p.title}</strong>
-                          {displayDate && <span className={styles.projectMeta}>{displayDate}</span>}
-                        </div>
-                        {p.description && <p className={styles.projectDescription}>{p.description}</p>}
-                        <div className={styles.projectLinks}>
-                          {p.link && <a href={p.link} target="_blank" rel="noreferrer">View project</a>}
-                          {p.repo && <a href={p.repo} target="_blank" rel="noreferrer">Repository</a>}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-
-              <section className={`${styles.card} ${styles.templates}`}>
-                <div className={styles.sectionHeading}>
-                  <h3>Email templates</h3>
-                  <p>Reserved area for previewing and editing template content.</p>
-                </div>
-                <div className={styles.placeholder}>
-                  <span>Coming soon</span>
-                  <p>Once the templates are ready, they will show up here for editing.</p>
-                </div>
-              </section>
+              <figure className={styles.loginIllustration}>
+                <Image
+                  src="/static/images/aliens/juggler_alien.svg"
+                  alt="Juggler alien illustration"
+                  width={420}
+                  height={420}
+                  priority
+                />
+              </figure>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className={styles.panel}>
+              <div className={styles.panelHeader}>
+                <div>
+                  <h2>Admin dashboard</h2>
+                  <p>Keep projects and internal content organized.</p>
+                </div>
+                <div className={styles.headerActions}>
+                  <button className={styles.secondaryButton} onClick={fetchProjects} disabled={loading}>Refresh projects</button>
+                  <button className={styles.ghostButton} onClick={logout}>Logout</button>
+                </div>
+              </div>
+
+              <div className={styles.panelGrid}>
+                <section className={`${styles.card} ${styles.addProject}`}>
+                  <div className={styles.sectionHeading}>
+                    <h3>Add project</h3>
+                    <p>Fill in the fields below to publish a new item.</p>
+                  </div>
+                  <form onSubmit={onAddProject} className={styles.form}>
+                    <label className={styles.field}>
+                      <span>Title</span>
+                      <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} required />
+                    </label>
+                    <label className={styles.field}>
+                      <span>Description</span>
+                      <textarea className={styles.textarea} value={description} onChange={e => setDescription(e.target.value)} />
+                    </label>
+                    <label className={styles.field}>
+                      <span>Link</span>
+                      <input className={styles.input} value={link} onChange={e => setLink(e.target.value)} />
+                    </label>
+                    <label className={styles.field}>
+                      <span>Repo</span>
+                      <input className={styles.input} value={repo} onChange={e => setRepo(e.target.value)} />
+                    </label>
+                    <div className={styles.formActions}>
+                      <button className={styles.primaryButton} type="submit" disabled={loading}>Add</button>
+                    </div>
+                  </form>
+                  {error && <div className={styles.error} role="alert">{error}</div>}
+                </section>
+
+                <section className={`${styles.card} ${styles.list}`}>
+                  <div className={styles.sectionHeading}>
+                    <h3>Published projects</h3>
+                    <p>Quickly review the content that is already live.</p>
+                  </div>
+                  {loading && <div className={styles.status}>Loading...</div>}
+                  {!loading && projects.length === 0 && <div className={styles.status}>No projects found.</div>}
+                  <ul className={styles.projectList}>
+                    {projects.map((p, idx) => {
+                      const displayDate = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : null;
+                      return (
+                        <li className={styles.projectItem} key={p._id ?? idx}>
+                          <div className={styles.projectHeader}>
+                            <strong>{p.title}</strong>
+                            {displayDate && <span className={styles.projectMeta}>{displayDate}</span>}
+                          </div>
+                          {p.description && <p className={styles.projectDescription}>{p.description}</p>}
+                          <div className={styles.projectLinks}>
+                            {p.link && <a href={p.link} target="_blank" rel="noreferrer">View project</a>}
+                            {p.repo && <a href={p.repo} target="_blank" rel="noreferrer">Repository</a>}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+
+                <section className={`${styles.card} ${styles.templates}`}>
+                  <div className={styles.sectionHeading}>
+                    <h3>Email templates</h3>
+                    <p>Reserved area for previewing and editing template content.</p>
+                  </div>
+                  <div className={styles.placeholder}>
+                    <span>Coming soon</span>
+                    <p>Once the templates are ready, they will show up here for editing.</p>
+                  </div>
+                </section>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

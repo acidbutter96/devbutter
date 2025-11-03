@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@devbutter/paint-background@git+ssh://git@github.com:acidbutter96/paint-background.git":
+  version "1.0.1"
+  resolved "git+ssh://git@github.com:acidbutter96/paint-background.git#3325ba642e4531bb4a60f1073f123df03f93ef5e"
+
+"@devbutter/paint-background@git+ssh://git@github.com:acidbutter96/paint-background.git#v1.0.2":
+  version "1.0.2"
+  resolved "git+ssh://git@github.com:acidbutter96/paint-background.git#12a2bc643ac27d6d58bb16f476607d6f8e221858"
+
 "@emnapi/core@^1.4.3":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.5.0.tgz#85cd84537ec989cebb2343606a1ee663ce4edaf0"

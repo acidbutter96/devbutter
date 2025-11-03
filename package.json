@@ -10,6 +10,7 @@
     "create-indexes": "node scripts/createIndexes.mjs"
   },
   "dependencies": {
+    "@devbutter/paint-background": "git+ssh://git@github.com:acidbutter96/paint-background.git#v1.0.2",
     "axios": "^1.6.8",
     "mongodb": "^6.20.0",
     "next": "14.1.3",
