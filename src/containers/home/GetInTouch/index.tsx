@@ -32,7 +32,37 @@ export const GetInTouch = (): React.JSX.Element => {
             <div className={styles.row}>
                 <div className={styles.secondRow}>
                     <div className={styles.contactFormColumn}>
-                        <form action="" method="post">
+                        <form action="" method="post" onSubmit={async (e) => {
+                                e.preventDefault();
+                                const form = e.currentTarget as HTMLFormElement;
+                                const fd = new FormData(form);
+
+                                const payload = {
+                                    name: String(fd.get("name") ?? ""),
+                                    email: String(fd.get("email") ?? ""),
+                                    message: String(fd.get("message") ?? ""),
+                                };
+
+                                try {
+                                    const res = await fetch('/api/formSubmit', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(payload),
+                                    });
+
+                                    if (!res.ok) {
+                                        console.error('Form submit error', await res.json());
+                                        alert('Erro ao enviar formulário.');
+                                        return;
+                                    }
+
+                                    alert('Formulário enviado com sucesso!');
+                                    form.reset();
+                                } catch (err) {
+                                    console.error(err);
+                                    alert('Erro ao enviar formulário.');
+                                }
+                            }}>
                             <div className={styles.row}>
                                 <Input name={"subject"} type={"text"} placeholder={"subject"}/>
                             </div>
@@ -50,6 +80,20 @@ export const GetInTouch = (): React.JSX.Element => {
                             <div className={styles.row}>
                                 <div className={styles.subjectContainer}>
                                     <Input name={"message"} type={"textarea"} placeholder={"message"} />
+                                </div>
+                            </div>
+                            <div className={styles.row}>
+                                <div className={styles.buttonContainer}>
+                                <button type="submit" className={styles.submitButton}>
+                                    <span className={styles.buttonIcon} aria-hidden>
+                                        {/* simple inline envelope icon */}
+                                        <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 2H19V14H1V2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                            <path d="M1 2L10 9L19 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span className={styles.buttonText}>Send</span>
+                                </button>
                                 </div>
                             </div>
                         </form>

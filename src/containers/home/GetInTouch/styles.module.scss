@@ -5,7 +5,7 @@ $projectFontSize: 1.3125rem;
 
 .container {
     padding: 0 4rem;
-    
+
     position: relative;
 
     display: flex;
@@ -171,7 +171,8 @@ $projectFontSize: 1.3125rem;
                 -webkit-text-size-adjust: 2rem !important;
                 color: var(--pink-50) !important;
                 opacity: 1 !important;
-                transition: background-color 5000s ease-in-out 0s; /* avoid autofill flash */
+                transition: background-color 5000s ease-in-out 0s;
+                /* avoid autofill flash */
 
             }
 
@@ -188,10 +189,66 @@ $projectFontSize: 1.3125rem;
 
         .subjectContainer {
             width: 100%;
+
             input {
-                
+
                 height: 15rem;
                 width: 100%;
+            }
+        }
+
+        .buttonContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            .submitButton {
+                width: 50%;
+                height: 3.5rem;
+                /* match input height */
+                background-color: var(--green-50);
+                color: var(--pink-50);
+                font-family: var(--font-roboto);
+                font-weight: 800;
+                font-size: 2rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                border: none;
+                cursor: pointer;
+                transition: background-color 150ms ease, color 150ms ease;
+
+                .buttonIcon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: transform 150ms ease;
+
+                    svg {
+                        width: 2.2rem;
+                        height: 1.8rem;
+                    }
+                }
+
+                .buttonText {
+                    transition: transform 150ms ease;
+                    display: inline-block;
+                }
+
+                &:hover {
+                    background-color: var(--pink-50);
+                    color: var(--green-50);
+
+                    .buttonIcon {
+                        transform: scale(1.25);
+                    }
+
+                    .buttonText {
+                        transform: scale(1.12);
+                    }
+                }
             }
         }
     }
@@ -210,6 +267,7 @@ $projectFontSize: 1.3125rem;
 
         .titleRow {
             font-family: var(--font-roboto);
+
             h3 {
                 font-size: 2.5rem;
             }
