@@ -10,7 +10,6 @@ interface FormBody {
 }
 
 interface MessageEntry {
-  email: string;
   createdAt: Date;
   message: string | null;
   subject: string | null;
@@ -44,7 +43,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (existing) {
       // Build the message object for this submission
       const messageObj: MessageEntry = {
-        email: normalizedEmail,
         createdAt: new Date(),
         message: body.message ?? null,
         subject: body.subject ?? null,
@@ -64,7 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // No existing document - create a new one with messages as an array of objects
     const firstMessage: MessageEntry = {
-      email: normalizedEmail,
       createdAt: new Date(),
       message: body.message ?? null,
       subject: body.subject ?? null,
