@@ -6,7 +6,7 @@ import StackCarousel from "./StackCarousel";
 
 export const Experience = (): React.JSX.Element => {
     return (
-        <div id="projects" className={styles.container}>
+        <div id="experience" className={styles.container}>
             <div id="title" className={styles.firstRow}>
                 <h2>experience</h2>
             </div>
