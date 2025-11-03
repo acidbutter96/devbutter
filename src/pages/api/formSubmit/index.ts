@@ -24,10 +24,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const db = await getDb();
     const collection = db.collection("formSubmissions");
 
+    // Check if a submission with this email already exists
+    const existing = await collection.findOne({ email: body.email });
+
+    if (existing) {
+      // If message provided, push it into the messages array
+      const toPush: string[] = [];
+      if (body.message) toPush.push(body.message);
+
+      const update: any = {
+        $set: { name: body.name ?? existing.name, updatedAt: new Date() },
+      };
+
+      if (toPush.length > 0) {
+        update.$push = { messages: { $each: toPush } };
+      }
+
+      const result = await collection.updateOne({ _id: existing._id }, update);
+
+      return res.status(200).json({ matchedCount: result.matchedCount, modifiedCount: result.modifiedCount });
+    }
+
+    // No existing document - create a new one with messages as an array
     const doc = {
       name: body.name,
       email: body.email,
-      message: body.message ?? null,
+      messages: body.message ? [body.message] : [],
       createdAt: new Date(),
     };
 
