@@ -4,11 +4,108 @@
     width: 100%;
     height: 100%;
 
-    input {
-        display: flex;
+    padding: 0 .25rem;
+
+    /* shared styles for input and textarea so styling lives inside the Input component */
+    input,
+    textarea {
+        display: block;
 
         width: 100%;
-        height: 100%;
-        
+        box-sizing: border-box;
+
+        overflow-y: hidden;
+
+        font-family: var(--font-roboto);
+        font-weight: 800;
+        font-size: 2rem;
+
+        background-color: var(--green-50);
+
+        color: var(--pink-50);
+
+        margin-bottom: .5rem;
+
+        /* horizontal padding so placeholder and content have spacing */
+        padding: 0 1rem;
+
+        border: none;
+        outline: none;
+    }
+
+    /* default single-line input height */
+    input {
+        height: 3.5rem;
+    }
+
+    /* multi-line message textarea styling */
+    textarea {
+        /* fixed height textarea with vertical overflow */
+        height: 15rem; /* fixed height as requested */
+        max-height: 15rem;
+        resize: none; /* prevent user resizing to keep fixed height */
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+        overflow-y: auto; /* enable vertical scroll when content exceeds fixed height */
+        white-space: pre-wrap; /* ensure line breaks/wrapping */
+        word-break: break-word;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: var(--pink-50);
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: var(--pink-10);
+        }
+    }
+
+    /* placeholder styling */
+    input::placeholder,
+    textarea::placeholder {
+        font-family: var(--font-roboto);
+        font-weight: 800;
+        color: var(--pink-50);
+    }
+
+    /* hide placeholder when the field is focused */
+    input:focus::placeholder,
+    textarea:focus::placeholder {
+        color: transparent;
+        transition: color 120ms ease;
+    }
+
+    /* Neutralize browser autofill/autocomplete styling so it inherits input styles */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    textarea:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+        box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+        -webkit-text-fill-color: var(--pink-50) !important;
+        -webkit-text-size-adjust: 2rem !important;
+        color: var(--pink-50) !important;
+        opacity: 1 !important;
+        transition: background-color 5000s ease-in-out 0s;
+        /* avoid autofill flash */
+    }
+
+    /* Firefox autofill */
+    input:-moz-autofill,
+    textarea:-moz-autofill {
+        box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+        -moz-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
+        -webkit-text-fill-color: var(--pink-50) !important;
+        -webkit-text-size-adjust: 2rem !important;
+
+        color: var(--pink-50) !important;
     }
 }

@@ -141,60 +141,12 @@ $projectFontSize: 1.3125rem;
             // background-color: var(--blue-50);
         }
 
-        input {
-            font-family: var(--font-roboto);
-            font-weight: 800;
-            font-size: 2rem;
-
-            background-color: var(--green-50);
-
-            height: 3.5rem;
-
-            color: var(--pink-50);
-
-            margin-bottom: .5rem;
-
-            &::placeholder {
-                font-family: var(--font-roboto);
-                font-weight: 800;
-                color: var(--pink-50);
-            }
-
-            /* Neutralize browser autofill/autocomplete styling so it inherits input styles */
-            &:-webkit-autofill,
-            &:-webkit-autofill:hover,
-            &:-webkit-autofill:focus,
-            &:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
-                box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
-                -webkit-text-fill-color: var(--pink-50) !important;
-                -webkit-text-size-adjust: 2rem !important;
-                color: var(--pink-50) !important;
-                opacity: 1 !important;
-                transition: background-color 5000s ease-in-out 0s;
-                /* avoid autofill flash */
-
-            }
-
-            /* Firefox autofill */
-            &:-moz-autofill {
-                box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
-                -moz-box-shadow: 0 0 0px 1000px var(--green-50) inset !important;
-                -webkit-text-fill-color: var(--pink-50) !important;
-                -webkit-text-size-adjust: 2rem !important;
-
-                color: var(--pink-50) !important;
-            }
-        }
+        /* input/textarea styling moved to the Input component's styles.module.scss */
 
         .subjectContainer {
             width: 100%;
 
-            input {
-
-                height: 15rem;
-                width: 100%;
-            }
+            /* message container uses Input component's textarea rendering and styling */
         }
 
         .buttonContainer {

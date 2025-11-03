@@ -71,10 +71,10 @@ export const GetInTouch = (): React.JSX.Element => {
                             </div>
                             <div className={styles.row}>
                                 <div className={styles.halfRow}>
-                                    <Input name={"telephone"} type={"text"} placeholder={"telephone"}/>
+                                    <Input name={"telephone"} type={"number"} placeholder={"telephone"}/>
                                 </div>
                                 <div className={styles.halfRow}>
-                                    <Input name={"email"} type={"text"} placeholder={"email"}/>
+                                    <Input name={"email"} type={"email"} placeholder={"email"}/>
                                 </div>
                             </div>
                             <div className={styles.row}>
