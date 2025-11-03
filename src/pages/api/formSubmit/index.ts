@@ -5,6 +5,17 @@ interface FormBody {
   name?: string;
   email?: string;
   message?: string;
+  subject?: string;
+  telephone?: string;
+}
+
+interface MessageEntry {
+  email: string;
+  createdAt: Date;
+  message: string | null;
+  subject: string | null;
+  telephone: string | null;
+  name: string | null;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,36 +31,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required fields: name and email" });
   }
 
+  // normalize email for case-insensitive matching and storage
+  const normalizedEmail = String(body.email).trim().toLowerCase();
+
   try {
     const db = await getDb();
     const collection = db.collection("formSubmissions");
 
-    // Check if a submission with this email already exists
-    const existing = await collection.findOne({ email: body.email });
+  // Check if a submission with this email already exists (we store emails normalized)
+  const existing = await collection.findOne({ email: normalizedEmail });
 
     if (existing) {
-      // If message provided, push it into the messages array
-      const toPush: string[] = [];
-      if (body.message) toPush.push(body.message);
-
-      const update: any = {
-        $set: { name: body.name ?? existing.name, updatedAt: new Date() },
+      // Build the message object for this submission
+      const messageObj: MessageEntry = {
+        email: normalizedEmail,
+        createdAt: new Date(),
+        message: body.message ?? null,
+        subject: body.subject ?? null,
+        telephone: body.telephone ?? null,
+        name: body.name ?? existing.name ?? null,
       };
 
-      if (toPush.length > 0) {
-        update.$push = { messages: { $each: toPush } };
-      }
+      const update: any = {
+        $set: { updatedAt: new Date(), email: normalizedEmail },
+        $push: { messages: { $each: [messageObj] } },
+      };
 
       const result = await collection.updateOne({ _id: existing._id }, update);
 
       return res.status(200).json({ matchedCount: result.matchedCount, modifiedCount: result.modifiedCount });
     }
 
-    // No existing document - create a new one with messages as an array
+    // No existing document - create a new one with messages as an array of objects
+    const firstMessage: MessageEntry = {
+      email: normalizedEmail,
+      createdAt: new Date(),
+      message: body.message ?? null,
+      subject: body.subject ?? null,
+      telephone: body.telephone ?? null,
+      name: body.name ?? null,
+    };
+
     const doc = {
-      name: body.name,
-      email: body.email,
-      messages: body.message ? [body.message] : [],
+      email: normalizedEmail,
+      messages: [firstMessage],
       createdAt: new Date(),
     };
 
