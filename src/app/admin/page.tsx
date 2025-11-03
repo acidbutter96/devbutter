@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./styles.module.scss";
 import { emailTemplates, type EmailSampleData } from "@/utils/emailTemplates";
@@ -45,6 +45,9 @@ export default function AdminPage(): React.JSX.Element {
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
   const [repo, setRepo] = useState("");
+
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLDivElement | null>(null);
 
   const templatesAvailable = emailTemplates.length > 0;
   const [activeTemplateId, setActiveTemplateId] = useState(() => (templatesAvailable ? emailTemplates[0].id : ""));
@@ -183,15 +186,49 @@ export default function AdminPage(): React.JSX.Element {
   }
 
   function scrollToSection(sectionId: string) {
+    if (sectionId === "overview") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     const el = document.getElementById(sectionId);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const navHeight = navRef.current?.getBoundingClientRect().height ?? 0;
+      const offset = navHeight + 24; // keep a small gap below the navbar
+      const targetY = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: targetY, behavior: "smooth" });
     }
   }
 
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  useEffect(() => {
+    const panelEl = panelRef.current;
+
+    if (!authed || !panelEl) {
+      if (panelEl) {
+        panelEl.style.removeProperty("--admin-nav-height");
+      }
+      return;
+    }
+
+    const navEl = navRef.current;
+    if (!navEl) return;
+
+    const updateHeight = () => {
+      const { height } = navEl.getBoundingClientRect();
+      panelEl.style.setProperty("--admin-nav-height", `${height}px`);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver !== "undefined") {
+      const resizeObserver = new ResizeObserver(() => updateHeight());
+      resizeObserver.observe(navEl);
+      return () => resizeObserver.disconnect();
+    }
+
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [authed, loading, projects.length, error]);
 
   return (
       <div className={styles.page}>
@@ -227,54 +264,40 @@ export default function AdminPage(): React.JSX.Element {
               </figure>
             </div>
           ) : (
-            <div className={styles.panel}>
-              <nav className={styles.panelNav} aria-label="Panel shortcuts">
-                {panelSections.map(section => (
-                  <button
-                    key={section.id}
-                    type="button"
-                    className={styles.panelNavButton}
-                    onClick={() => scrollToSection(section.id)}
-                  >
-                    {section.label}
-                  </button>
-                ))}
-              </nav>
-
-              <section className={styles.section} id="overview">
-                <div className={styles.sectionHeader}>
-                  <div>
+            <div ref={panelRef} className={styles.panel}>
+              <div ref={navRef} className={styles.adminNav}>
+                <div className={styles.adminNavContent}>
+                  <div className={styles.adminNavCopy}>
                     <h2>Admin dashboard</h2>
                     <p>Keep projects and internal content organized.</p>
                   </div>
                   <div className={styles.sectionActions}>
-                    <button className={styles.homeButton} type="button" onClick={scrollToTop} aria-label="Back to top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className={styles.homeButtonIcon} focusable="false">
-                        <path d="M12 5l-6 6 1.4 1.4L11 9.8V19h2V9.8l3.6 3.6L18 11z" fill="currentColor" />
-                      </svg>
-                    </button>
-                    <button className={styles.secondaryButton} onClick={fetchProjects} disabled={loading}>Refresh projects</button>
-                    <button className={styles.ghostButton} onClick={logout}>Logout</button>
+                    <button className={styles.secondaryButton} type="button" onClick={fetchProjects} disabled={loading}>Refresh projects</button>
+                    <button className={styles.ghostButton} type="button" onClick={logout}>Logout</button>
                   </div>
                 </div>
-              </section>
 
-              <section className={styles.section} id="projects">
+                <nav className={styles.panelNav} aria-label="Panel shortcuts">
+                  {panelSections.map(section => (
+                    <button
+                      key={section.id}
+                      type="button"
+                      className={styles.panelNavButton}
+                      onClick={() => scrollToSection(section.id)}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
+                </nav>
+              </div>
+
+              <div className={styles.panelSections}>
+                <section className={styles.section} id="projects">
                 <div className={styles.sectionHeading}>
                   <div className={styles.sectionHeadingCopy}>
                     <h3>Projects</h3>
                     <p>Manage what is published on the site and keep experiments in order.</p>
                   </div>
-                  <button
-                    className={`${styles.homeButton} ${styles.sectionHomeButton}`}
-                    type="button"
-                    onClick={scrollToTop}
-                    aria-label="Back to top"
-                  >
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className={styles.homeButtonIcon} focusable="false">
-                      <path d="M12 5l-6 6 1.4 1.4L11 9.8V19h2V9.8l3.6 3.6L18 11z" fill="currentColor" />
-                    </svg>
-                  </button>
                 </div>
 
                 <div className={styles.sectionGrid}>
@@ -336,22 +359,12 @@ export default function AdminPage(): React.JSX.Element {
                 </div>
               </section>
 
-              <section className={`${styles.section} ${styles.sectionWide}`} id="emails">
+                <section className={`${styles.section} ${styles.sectionWide}`} id="emails">
                 <div className={styles.sectionHeading}>
                   <div className={styles.sectionHeadingCopy}>
                     <h3>Email templates</h3>
                     <p>Preview automated emails with mock data before going live.</p>
                   </div>
-                  <button
-                    className={`${styles.homeButton} ${styles.sectionHomeButton}`}
-                    type="button"
-                    onClick={scrollToTop}
-                    aria-label="Back to top"
-                  >
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className={styles.homeButtonIcon} focusable="false">
-                      <path d="M12 5l-6 6 1.4 1.4L11 9.8V19h2V9.8l3.6 3.6L18 11z" fill="currentColor" />
-                    </svg>
-                  </button>
                 </div>
 
                 <div className={`${styles.card} ${styles.templates}`}>
@@ -413,22 +426,12 @@ export default function AdminPage(): React.JSX.Element {
                 </div>
               </section>
 
-              <section className={`${styles.section} ${styles.sectionMockTemplates}`} id="email-mock-data">
+                <section className={`${styles.section} ${styles.sectionMockTemplates}`} id="email-mock-data">
                 <div className={styles.sectionHeading}>
                   <div className={styles.sectionHeadingCopy}>
                     <h3>Template mock data</h3>
                     <p>See which fields feed each email layout at a glance.</p>
                   </div>
-                  <button
-                    className={`${styles.homeButton} ${styles.sectionHomeButton}`}
-                    type="button"
-                    onClick={scrollToTop}
-                    aria-label="Back to top"
-                  >
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className={styles.homeButtonIcon} focusable="false">
-                      <path d="M12 5l-6 6 1.4 1.4L11 9.8V19h2V9.8l3.6 3.6L18 11z" fill="currentColor" />
-                    </svg>
-                  </button>
                 </div>
 
                 <div className={styles.mockGrid}>
@@ -480,6 +483,7 @@ export default function AdminPage(): React.JSX.Element {
                   ))}
                 </div>
               </section>
+              </div>
             </div>
           )}
         </div>
