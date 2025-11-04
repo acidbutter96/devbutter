@@ -7,6 +7,59 @@ import { emailTemplates, type EmailSampleData } from "@/utils/emailTemplates";
 
 type EmailTemplateConfig = (typeof emailTemplates)[number];
 
+type PanelSectionId = "overview" | "projects" | "emails" | "email-mock-data";
+
+interface PanelSectionCopy {
+  title: string;
+  description: string;
+}
+
+interface PanelSectionConfig {
+  id: PanelSectionId;
+  label: string;
+  copy: PanelSectionCopy;
+}
+
+const PANEL_SECTIONS: PanelSectionConfig[] = [
+  {
+    id: "overview",
+    label: "Overview",
+    copy: {
+      title: "Admin dashboard",
+      description: "Keep projects and internal content organized.",
+    },
+  },
+  {
+    id: "projects",
+    label: "Projects",
+    copy: {
+      title: "Projects",
+      description: "Manage what is published on the site and keep experiments in order.",
+    },
+  },
+  {
+    id: "emails",
+    label: "Email templates",
+    copy: {
+      title: "Email templates",
+      description: "Preview automated emails with mock data before going live.",
+    },
+  },
+  {
+    id: "email-mock-data",
+    label: "Mock data",
+    copy: {
+      title: "Template mock data",
+      description: "See which fields feed each email layout at a glance.",
+    },
+  },
+];
+
+const PANEL_SECTION_LOOKUP: Record<PanelSectionId, PanelSectionConfig> = PANEL_SECTIONS.reduce<Record<PanelSectionId, PanelSectionConfig>>((acc, section) => {
+  acc[section.id] = section;
+  return acc;
+}, {} as Record<PanelSectionId, PanelSectionConfig>);
+
 const emailFieldLabels: Record<keyof EmailSampleData, string> = {
   userName: "User name",
   userEmail: "User email",
@@ -40,6 +93,7 @@ export default function AdminPage(): React.JSX.Element {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeSectionId, setActiveSectionId] = useState<PanelSectionId>("overview");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -60,15 +114,8 @@ export default function AdminPage(): React.JSX.Element {
     return activeTemplate.buildHtml(activeTemplate.previewData);
   }, [activeTemplate]);
 
-  const panelSections = React.useMemo(
-    () => [
-      { id: "overview", label: "Overview" },
-      { id: "projects", label: "Projects" },
-      { id: "emails", label: "Email templates" },
-      { id: "email-mock-data", label: "Mock data" },
-    ],
-    []
-  );
+  const panelSections = PANEL_SECTIONS;
+  const navCopy = PANEL_SECTION_LOOKUP[activeSectionId]?.copy ?? PANEL_SECTION_LOOKUP["overview"].copy;
 
   useEffect(() => {
     // restore credentials from sessionStorage
@@ -85,6 +132,12 @@ export default function AdminPage(): React.JSX.Element {
       // ignore
     }
   }, []);
+
+  useEffect(() => {
+    if (!authed) {
+      setActiveSectionId("overview");
+    }
+  }, [authed]);
 
   function basicHeader(e: string, p: string) {
     return "Basic " + btoa(`${e}:${p}`);
@@ -185,19 +238,18 @@ export default function AdminPage(): React.JSX.Element {
     setProjects([]);
   }
 
-  function scrollToSection(sectionId: string) {
-    if (sectionId === "overview") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
+  function scrollToSection(sectionId: PanelSectionId) {
+  if (!PANEL_SECTION_LOOKUP[sectionId]) return;
 
-    const el = document.getElementById(sectionId);
-    if (el) {
-      const navHeight = navRef.current?.getBoundingClientRect().height ?? 0;
-      const offset = navHeight + 24; // keep a small gap below the navbar
-      const targetY = el.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top: targetY, behavior: "smooth" });
-    }
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+
+    const navHeight = navRef.current?.getBoundingClientRect().height ?? 0;
+    const offset = navHeight + 24;
+    const targetY = el.getBoundingClientRect().top + window.scrollY - offset;
+
+    setActiveSectionId(prev => (prev === sectionId ? prev : sectionId));
+    window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
   }
 
   useEffect(() => {
@@ -229,6 +281,37 @@ export default function AdminPage(): React.JSX.Element {
     window.addEventListener("resize", updateHeight);
     return () => window.removeEventListener("resize", updateHeight);
   }, [authed, loading, projects.length, error]);
+
+  useEffect(() => {
+    if (!authed) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+
+        const primary = visible[0] ?? entries.slice().sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (primary?.target?.id) {
+          const nextId = primary.target.id as PanelSectionId;
+          setActiveSectionId(prev => (prev === nextId ? prev : nextId));
+        }
+      },
+      {
+        rootMargin: "0px 0px -60% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    );
+
+    const sectionIds = panelSections.map(section => section.id);
+    sectionIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [authed, panelSections]);
 
   return (
       <div className={styles.page}>
@@ -268,8 +351,8 @@ export default function AdminPage(): React.JSX.Element {
               <div ref={navRef} className={styles.adminNav}>
                 <div className={styles.adminNavContent}>
                   <div className={styles.adminNavCopy}>
-                    <h2>Admin dashboard</h2>
-                    <p>Keep projects and internal content organized.</p>
+                    <h2>{navCopy.title}</h2>
+                    <p>{navCopy.description}</p>
                   </div>
                   <div className={styles.sectionActions}>
                     <button className={styles.secondaryButton} type="button" onClick={fetchProjects} disabled={loading}>Refresh projects</button>
@@ -292,15 +375,10 @@ export default function AdminPage(): React.JSX.Element {
               </div>
 
               <div className={styles.panelSections}>
-                <section className={styles.section} id="projects">
-                <div className={styles.sectionHeading}>
-                  <div className={styles.sectionHeadingCopy}>
-                    <h3>Projects</h3>
-                    <p>Manage what is published on the site and keep experiments in order.</p>
-                  </div>
-                </div>
+                <span id="overview" className={styles.sectionSentinel} aria-hidden="true" />
 
-                <div className={styles.sectionGrid}>
+                <section className={styles.section} id="projects" aria-label={PANEL_SECTION_LOOKUP["projects"].copy.title}>
+                  <div className={styles.sectionGrid}>
                   <div className={`${styles.card} ${styles.cardForm}`}>
                     <div className={styles.sectionSubheading}>
                       <h4>New project</h4>
@@ -356,18 +434,11 @@ export default function AdminPage(): React.JSX.Element {
                       })}
                     </ul>
                   </div>
-                </div>
-              </section>
-
-                <section className={`${styles.section} ${styles.sectionWide}`} id="emails">
-                <div className={styles.sectionHeading}>
-                  <div className={styles.sectionHeadingCopy}>
-                    <h3>Email templates</h3>
-                    <p>Preview automated emails with mock data before going live.</p>
                   </div>
-                </div>
+                </section>
 
-                <div className={`${styles.card} ${styles.templates}`}>
+                <section className={`${styles.section} ${styles.sectionWide}`} id="emails" aria-label={PANEL_SECTION_LOOKUP["emails"].copy.title}>
+                  <div className={`${styles.card} ${styles.templates}`}>
                   {templatesAvailable ? (
                     <>
                       <div className={styles.tabList} role="tablist" aria-label="Email templates">
@@ -423,18 +494,11 @@ export default function AdminPage(): React.JSX.Element {
                   ) : (
                     <div className={styles.status}>No templates defined yet.</div>
                   )}
-                </div>
-              </section>
-
-                <section className={`${styles.section} ${styles.sectionMockTemplates}`} id="email-mock-data">
-                <div className={styles.sectionHeading}>
-                  <div className={styles.sectionHeadingCopy}>
-                    <h3>Template mock data</h3>
-                    <p>See which fields feed each email layout at a glance.</p>
                   </div>
-                </div>
+                </section>
 
-                <div className={styles.mockGrid}>
+                <section className={`${styles.section} ${styles.sectionMockTemplates}`} id="email-mock-data" aria-label={PANEL_SECTION_LOOKUP["email-mock-data"].copy.title}>
+                  <div className={styles.mockGrid}>
                   {emailTemplates.map(template => (
                     <article key={template.id} className={`${styles.card} ${styles.mockCard}`}>
                       <header className={styles.mockHeader}>
@@ -481,8 +545,8 @@ export default function AdminPage(): React.JSX.Element {
                       </ul>
                     </article>
                   ))}
-                </div>
-              </section>
+                  </div>
+                </section>
               </div>
             </div>
           )}
