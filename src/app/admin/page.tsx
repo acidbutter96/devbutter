@@ -134,6 +134,7 @@ interface FlattenedSubmissionMessage extends SubmissionMessage {
 export default function AdminPage(): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState<string | null>(null);
   const [authed, setAuthed] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
@@ -217,15 +218,16 @@ export default function AdminPage(): React.JSX.Element {
   const navCopy = PANEL_SECTION_LOOKUP[activeSectionId]?.copy ?? PANEL_SECTION_LOOKUP["overview"].copy;
 
   useEffect(() => {
-    // restore credentials from sessionStorage
+    // restore token from sessionStorage
     try {
       const saved = sessionStorage.getItem(AUTH_KEY);
       if (saved) {
-        const { email: e, password: p } = JSON.parse(saved);
-        setEmail(e);
-        setPassword(p);
-        // attempt to validate
-        validateAuth(e, p);
+        const { token: t } = JSON.parse(saved);
+        if (t) {
+          setToken(t);
+          // attempt to validate
+          validateAuthToken(t);
+        }
       }
     } catch (e) {
       // ignore
@@ -264,26 +266,26 @@ export default function AdminPage(): React.JSX.Element {
     }
   }, [flattenedMessages, selectedMessageKey]);
 
-  function basicHeader(e: string, p: string) {
-    return "Basic " + btoa(`${e}:${p}`);
+  function bearerHeader(t: string | null) {
+    return t ? `Bearer ${t}` : "";
   }
 
-  async function validateAuth(e: string, p: string) {
+  async function validateAuthToken(t: string) {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/admin`, {
         method: "GET",
         headers: {
-          Authorization: basicHeader(e, p),
+          Authorization: bearerHeader(t),
         },
       });
       if (res.status === 200) {
         const data = await res.json();
         setProjects(Array.isArray(data) ? data : []);
         setAuthed(true);
-        sessionStorage.setItem(AUTH_KEY, JSON.stringify({ email: e, password: p }));
-        void fetchFormSubmissions(e, p);
+        sessionStorage.setItem(AUTH_KEY, JSON.stringify({ token: t }));
+        void fetchFormSubmissions(undefined, undefined, t);
       } else if (res.status === 401) {
         setAuthed(false);
         setError("Invalid credentials");
@@ -301,7 +303,37 @@ export default function AdminPage(): React.JSX.Element {
 
   async function onLogin(e: React.FormEvent) {
     e.preventDefault();
-    await validateAuth(email, password);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        if (res.status === 401) setError('Invalid credentials');
+        else setError(`Error: ${res.status}`);
+        setAuthed(false);
+        return;
+      }
+      const data = await res.json();
+      const t = data?.token;
+      if (!t) {
+        setError('No token received');
+        return;
+      }
+      setToken(t);
+      sessionStorage.setItem(AUTH_KEY, JSON.stringify({ token: t }));
+      setAuthed(true);
+      void fetchFormSubmissions(undefined, undefined, t);
+      void fetchProjects();
+    } catch (err) {
+      setError('Unable to reach the API');
+      setAuthed(false);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function fetchProjects() {
@@ -309,9 +341,9 @@ export default function AdminPage(): React.JSX.Element {
     setError(null);
     try {
       const res = await fetch(`/api/admin`, {
-        method: "GET",
-        headers: { Authorization: basicHeader(email, password) },
-      });
+          method: "GET",
+          headers: { Authorization: bearerHeader(token) },
+        });
       if (res.ok) setProjects(await res.json());
       else setError(`Error: ${res.status}`);
     } catch (e) {
@@ -321,10 +353,9 @@ export default function AdminPage(): React.JSX.Element {
     }
   }
 
-  async function fetchFormSubmissions(overrideEmail?: string, overridePassword?: string) {
-    const authEmail = overrideEmail ?? email;
-    const authPassword = overridePassword ?? password;
-    if (!authEmail || !authPassword) return;
+  async function fetchFormSubmissions(overrideEmail?: string, overridePassword?: string, overrideToken?: string) {
+    const t = overrideToken ?? token;
+    if (!t) return;
 
     setSubmissionsLoading(true);
     setSubmissionsError(null);
@@ -332,7 +363,7 @@ export default function AdminPage(): React.JSX.Element {
     try {
       const res = await fetch(`/api/admin/formSubmissions`, {
         method: "GET",
-        headers: { Authorization: basicHeader(authEmail, authPassword) },
+        headers: { Authorization: bearerHeader(t) },
       });
 
       if (res.status === 401) {
@@ -370,13 +401,13 @@ export default function AdminPage(): React.JSX.Element {
     try {
       const payload = { title, description, link, repo };
       const res = await fetch(`/api/admin`, {
-        method: "POST",
-        headers: {
-          Authorization: basicHeader(email, password),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+          method: "POST",
+          headers: {
+            Authorization: bearerHeader(token),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
       if (res.status === 201) {
         const created = await res.json();
         setProjects(prev => [created, ...prev]);
@@ -423,9 +454,8 @@ export default function AdminPage(): React.JSX.Element {
       })
     );
 
-    const authEmail = email;
-    const authPassword = password;
-    if (!authEmail || !authPassword) return;
+  const t = token;
+  if (!t) return;
 
     const payload: Record<string, unknown> = {
       submissionId: message.submissionId,
@@ -441,7 +471,7 @@ export default function AdminPage(): React.JSX.Element {
       const res = await fetch(`/api/admin/formSubmissions`, {
         method: "PATCH",
         headers: {
-          Authorization: basicHeader(authEmail, authPassword),
+          Authorization: bearerHeader(t),
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
@@ -470,10 +500,17 @@ export default function AdminPage(): React.JSX.Element {
   }
 
   function logout() {
+    // call logout endpoint to remove server-side session, then clear client state
+    try {
+      void fetch('/api/admin/logout', { method: 'POST', headers: { Authorization: bearerHeader(token) } });
+    } catch (e) {
+      // ignore
+    }
     sessionStorage.removeItem(AUTH_KEY);
     setAuthed(false);
     setEmail("");
     setPassword("");
+    setToken(null);
     setProjects([]);
     setFormSubmissions([]);
     setSelectedMessageKey(null);

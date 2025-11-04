@@ -1,37 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import getDb from "@/services/mongo";
 import { ObjectId } from "mongodb";
-
-function unauthorized(res: NextApiResponse) {
-  res.setHeader("WWW-Authenticate", 'Basic realm="Admin"');
-  return res.status(401).json({ error: "Unauthorized" });
-}
-
-function checkBasicAuth(req: NextApiRequest): boolean {
-  const auth = req.headers.authorization;
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminEmail || !adminPassword) return false;
-  if (!auth) return false;
-
-  const parts = auth.split(" ");
-  if (parts.length !== 2) return false;
-  const scheme = parts[0];
-  const credentials = parts[1];
-  if (!/^Basic$/i.test(scheme)) return false;
-
-  try {
-    const decoded = Buffer.from(credentials, "base64").toString();
-    const idx = decoded.indexOf(":");
-    if (idx === -1) return false;
-    const email = decoded.slice(0, idx);
-    const password = decoded.slice(idx + 1);
-    return email === adminEmail && password === adminPassword;
-  } catch (e) {
-    return false;
-  }
-}
+import { verifyTokenAndSession, unauthorized as authUnauthorized } from '@/services/auth';
 
 interface SafeMessageResponse {
   messageId: string | null;
@@ -52,8 +22,12 @@ interface SafeSubmissionResponse {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!checkBasicAuth(req)) {
-    return unauthorized(res);
+  try {
+    const session = await verifyTokenAndSession(req);
+    if (!session) return authUnauthorized(res);
+  } catch (err) {
+    console.error('Auth check failed', err);
+    return authUnauthorized(res);
   }
 
   if (req.method === "GET") {
