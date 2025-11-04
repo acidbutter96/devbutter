@@ -4,6 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./styles.module.scss";
 import { emailTemplates, type EmailSampleData } from "@/utils/emailTemplates";
+import Login from "@/components/Admin/Login";
+import Nav from "@/components/Admin/Nav";
+import Notifications from "@/components/Admin/Notifications";
+import ProjectsPanel from "@/components/Admin/ProjectsPanel";
+import EmailsPanel from "@/components/Admin/EmailsPanel";
 
 type EmailTemplateConfig = (typeof emailTemplates)[number];
 
@@ -610,379 +615,55 @@ export default function AdminPage(): React.JSX.Element {
       <div className={styles.page}>
         <div className={styles.wrapper}>
           {!authed ? (
-            <div className={styles.loginLayout}>
-              <section className={`${styles.card} ${styles.loginCard}`}>
-                <h2>Restricted access</h2>
-                <form onSubmit={onLogin} className={styles.form}>
-                  <label className={styles.field}>
-                    <span>Email</span>
-                    <input className={styles.input} value={email} onChange={e => setEmail(e.target.value)} type="email" required />
-                  </label>
-                  <label className={styles.field}>
-                    <span>Password</span>
-                    <input className={styles.input} value={password} onChange={e => setPassword(e.target.value)} type="password" required />
-                  </label>
-                  <div className={styles.formActions}>
-                    <button className={styles.primaryButton} type="submit" disabled={loading}>Sign in</button>
-                  </div>
-                  {error && <div className={styles.error} role="alert">{error}</div>}
-                </form>
-              </section>
-
-              <figure className={styles.loginIllustration}>
-                <Image
-                  src="/static/images/aliens/juggler_alien.svg"
-                  alt="Juggler alien illustration"
-                  width={420}
-                  height={420}
-                  priority
-                />
-              </figure>
-            </div>
+            <Login email={email} password={password} setEmail={setEmail} setPassword={setPassword} loading={loading} error={error} onLogin={onLogin} />
           ) : (
             <div ref={panelRef} className={styles.panel}>
-              <div ref={navRef} className={styles.adminNav}>
-                <div className={styles.adminNavContent}>
-                  <div className={styles.adminNavCopy}>
-                    <h2>{navCopy.title}</h2>
-                    <p>{navCopy.description}</p>
-                  </div>
-                  <div className={styles.sectionActions}>
-                    <button className={styles.secondaryButton} type="button" onClick={fetchProjects} disabled={loading}>Refresh projects</button>
-                    <button className={styles.ghostButton} type="button" onClick={logout}>Logout</button>
-                  </div>
-                </div>
-
-                <nav className={styles.panelNav} aria-label="Panel shortcuts">
-                  {panelSections.map(section => (
-                    <button
-                      key={section.id}
-                      type="button"
-                      className={`${styles.panelNavButton} ${section.id === activeSectionId ? styles.panelNavButtonActiveSection : ""}`}
-                      aria-pressed={section.id === activeSectionId}
-                      onClick={() => scrollToSection(section.id)}
-                    >
-                      <span>{section.label}</span>
-                      {section.id === "form-submissions" && unreadCount > 0 ? (
-                        <span className={styles.panelNavButtonBadge} aria-label={`${unreadCount} unread notifications`}>
-                          {unreadCount > 99 ? "99+" : unreadCount}
-                        </span>
-                      ) : null}
-                    </button>
-                  ))}
-                </nav>
+              <div ref={navRef}>
+                <Nav
+                  panelSections={panelSections.map(s => ({ id: s.id, label: s.label }))}
+                  activeSectionId={activeSectionId}
+                  navCopy={navCopy}
+                  unreadCount={unreadCount}
+                  onScrollToSection={(id: string) => scrollToSection(id as PanelSectionId)}
+                  refreshProjects={fetchProjects}
+                  logout={logout}
+                />
               </div>
 
               <div className={styles.panelSections}>
                 <span id="overview" className={styles.sectionSentinel} aria-hidden="true" />
 
-                <section
-                  className={`${styles.section} ${styles.sectionNotifications}`}
-                  id="form-submissions"
-                  aria-label={PANEL_SECTION_LOOKUP["form-submissions"].copy.title}
-                >
-                  <div className={styles.sectionHeader}>
-                    <div className={styles.sectionSubheading}>
-                      <h4>Form submissions</h4>
-                      <p>Review and respond to the most recent contact form entries.</p>
-                    </div>
-                    <div className={styles.sectionActions}>
-                      <button
-                        className={styles.secondaryButton}
-                        type="button"
-                        onClick={() => fetchFormSubmissions()}
-                        disabled={submissionsLoading}
-                      >
-                        Refresh
-                      </button>
-                    </div>
-                  </div>
+                <Notifications
+                  flattenedMessages={flattenedMessages}
+                  paginatedMessages={paginatedMessages}
+                  submissionsLoading={submissionsLoading}
+                  submissionsError={submissionsError}
+                  selectedMessageKey={selectedMessageKey}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  setCurrentPage={setCurrentPage}
+                  handleSelectMessage={(m: any) => handleSelectMessage(m as FlattenedSubmissionMessage)}
+                  selectedMessage={selectedMessage}
+                  formatTimestamp={formatTimestamp}
+                  fetchFormSubmissions={() => void fetchFormSubmissions()}
+                />
 
-                  {submissionsError && <div className={styles.error} role="alert">{submissionsError}</div>}
+                <ProjectsPanel
+                  projects={projects}
+                  loading={loading}
+                  title={title}
+                  description={description}
+                  link={link}
+                  repo={repo}
+                  setTitle={setTitle}
+                  setDescription={setDescription}
+                  setLink={setLink}
+                  setRepo={setRepo}
+                  onAddProject={onAddProject}
+                  error={error}
+                />
 
-                  <div className={styles.notificationsLayout}>
-                    <div className={`${styles.card} ${styles.notificationList}`}>
-                      <div className={styles.notificationListHeader}>
-                        <h5>Inbox</h5>
-                        <span className={styles.notificationListCount}>{flattenedMessages.length}</span>
-                      </div>
-
-                      {submissionsLoading ? (
-                        <div className={styles.status}>Loading...</div>
-                      ) : flattenedMessages.length === 0 ? (
-                        <div className={styles.status}>No submissions yet.</div>
-                      ) : (
-                        <>
-                          <ul className={styles.notificationItems}>
-                            {paginatedMessages.map(item => {
-                            const isActive = item.key === selectedMessageKey;
-                            const displayName = item.name?.trim() || "Anonymous";
-                            const previewSource = item.message ? item.message.replace(/\s+/g, " ") : "No message provided";
-                            const preview = previewSource.length > 140 ? `${previewSource.slice(0, 140)}...` : previewSource;
-
-                            return (
-                              <li key={item.key}>
-                                <button
-                                  type="button"
-                                  className={`${styles.notificationItem} ${isActive ? styles.notificationItemActive : ""} ${item.read ? "" : styles.notificationItemUnread}`}
-                                  onClick={() => handleSelectMessage(item)}
-                                >
-                                  <div className={styles.notificationItemHeader}>
-                                    <span className={styles.notificationItemTitle}>{displayName}</span>
-                                    <div className={styles.notificationItemMeta}>
-                                      {!item.read && <span className={styles.notificationUnreadDot} aria-hidden="true" />}
-                                      <time dateTime={item.createdAt}>{formatTimestamp(item.createdAt)}</time>
-                                    </div>
-                                  </div>
-                                  <span className={styles.notificationItemEmail}>{item.email}</span>
-                                  {item.subject && <span className={styles.notificationItemSubject}>{item.subject}</span>}
-                                  <p className={styles.notificationItemPreview}>{preview}</p>
-                                </button>
-                              </li>
-                            );
-                          })}
-                          </ul>
-
-                          {/* Pagination controls */}
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.5rem" }}>
-                            <div style={{ color: "rgba(255,255,255,0.72)", fontSize: "0.9rem" }}>
-                              Showing {Math.min(flattenedMessages.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} - {Math.min(flattenedMessages.length, currentPage * ITEMS_PER_PAGE)} of {flattenedMessages.length}
-                            </div>
-                            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                              <button
-                                type="button"
-                                className={styles.ghostButton}
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                              >
-                                Prev
-                              </button>
-                              <span style={{ color: "rgba(255,255,255,0.72)", fontSize: "0.9rem" }}>Page {currentPage} / {totalPages}</span>
-                              <button
-                                type="button"
-                                className={styles.ghostButton}
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
-                              >
-                                Next
-                              </button>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    <div className={`${styles.card} ${styles.notificationDetail}`}>
-                      {selectedMessage ? (
-                        <>
-                          <header className={styles.notificationDetailHeader}>
-                            <div>
-                              <h4>{selectedMessage.subject || "No subject"}</h4>
-                              <time dateTime={selectedMessage.createdAt}>{formatTimestamp(selectedMessage.createdAt)}</time>
-                            </div>
-                            {!selectedMessage.read && <span className={styles.badge}>New</span>}
-                          </header>
-
-                          <dl className={styles.notificationDetailMeta}>
-                            <div>
-                              <dt>From</dt>
-                              <dd>{selectedMessage.name ? `${selectedMessage.name} - ${selectedMessage.email}` : selectedMessage.email}</dd>
-                            </div>
-                            {selectedMessage.telephone ? (
-                              <div>
-                                <dt>Phone</dt>
-                                <dd>{selectedMessage.telephone}</dd>
-                              </div>
-                            ) : null}
-                          </dl>
-
-                          <div className={styles.notificationDetailBody}>
-                            {selectedMessage.message ? (
-                              selectedMessage.message.split(/\n{2,}/).map((paragraph, paragraphIndex) => (
-                                <p key={`${selectedMessage.key}-paragraph-${paragraphIndex}`}>{paragraph}</p>
-                              ))
-                            ) : (
-                              <p>No message content provided.</p>
-                            )}
-                          </div>
-                        </>
-                      ) : (
-                        <div className={styles.status}>Select a message to preview.</div>
-                      )}
-                    </div>
-                  </div>
-                </section>
-
-                <section className={styles.section} id="projects" aria-label={PANEL_SECTION_LOOKUP["projects"].copy.title}>
-                  <div className={styles.sectionGrid}>
-                  <div className={`${styles.card} ${styles.cardForm}`}>
-                    <div className={styles.sectionSubheading}>
-                      <h4>New project</h4>
-                      <p>Fill in the fields and ship instantly.</p>
-                    </div>
-                    <form onSubmit={onAddProject} className={styles.form}>
-                      <label className={styles.field}>
-                        <span>Title</span>
-                        <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} required />
-                      </label>
-                      <label className={styles.field}>
-                        <span>Description</span>
-                        <textarea className={styles.textarea} value={description} onChange={e => setDescription(e.target.value)} />
-                      </label>
-                      <label className={styles.field}>
-                        <span>Link</span>
-                        <input className={styles.input} value={link} onChange={e => setLink(e.target.value)} />
-                      </label>
-                      <label className={styles.field}>
-                        <span>Repo</span>
-                        <input className={styles.input} value={repo} onChange={e => setRepo(e.target.value)} />
-                      </label>
-                      <div className={styles.formActions}>
-                        <button className={styles.primaryButton} type="submit" disabled={loading}>Add</button>
-                      </div>
-                    </form>
-                    {error && <div className={styles.error} role="alert">{error}</div>}
-                  </div>
-
-                  <div className={`${styles.card} ${styles.cardList}`}>
-                    <div className={styles.sectionSubheading}>
-                      <h4>Published projects</h4>
-                      <p>Quickly review what is live across the portfolio.</p>
-                    </div>
-                    {loading && <div className={styles.status}>Loading...</div>}
-                    {!loading && projects.length === 0 && <div className={styles.status}>No projects found.</div>}
-                    <ul className={styles.projectList}>
-                      {projects.map((p, idx) => {
-                        const displayDate = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : null;
-                        return (
-                          <li className={styles.projectItem} key={p._id ?? idx}>
-                            <div className={styles.projectHeader}>
-                              <strong>{p.title}</strong>
-                              {displayDate && <span className={styles.projectMeta}>{displayDate}</span>}
-                            </div>
-                            {p.description && <p className={styles.projectDescription}>{p.description}</p>}
-                            <div className={styles.projectLinks}>
-                              {p.link && <a href={p.link} target="_blank" rel="noreferrer">View project</a>}
-                              {p.repo && <a href={p.repo} target="_blank" rel="noreferrer">Repository</a>}
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  </div>
-                </section>
-
-                <section className={`${styles.section} ${styles.sectionWide}`} id="emails" aria-label={PANEL_SECTION_LOOKUP["emails"].copy.title}>
-                  <div className={`${styles.card} ${styles.templates}`}>
-                  {templatesAvailable ? (
-                    <>
-                      <div className={styles.tabList} role="tablist" aria-label="Email templates">
-                        {emailTemplates.map((template: EmailTemplateConfig) => {
-                          const isActive = template.id === activeTemplate?.id;
-                          return (
-                            <button
-                              type="button"
-                              key={template.id}
-                              role="tab"
-                              aria-selected={isActive}
-                              className={`${styles.tabButton} ${isActive ? styles.tabButtonActive : ""}`}
-                              onClick={() => setActiveTemplateId(template.id)}
-                            >
-                              <span>{template.label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {activeTemplate ? (
-                        <div className={styles.previewLayout}>
-                          <div className={styles.previewMeta}>
-                            <span className={styles.badge}>Subject</span>
-                            <h4>{activeTemplate.subject}</h4>
-                            <p>{activeTemplate.description}</p>
-                            <dl className={styles.metaGrid}>
-                              <div>
-                                <dt>From</dt>
-                                <dd>{activeTemplate.previewRecipients.from}</dd>
-                              </div>
-                              <div>
-                                <dt>To</dt>
-                                <dd>{activeTemplate.previewRecipients.to}</dd>
-                              </div>
-                            </dl>
-                          </div>
-                          <div className={styles.previewFrame}>
-                            <iframe
-                              title={activeTemplate.label}
-                              srcDoc={previewHtml}
-                              className={styles.previewIframe}
-                              sandbox="allow-same-origin"
-                              loading="lazy"
-                              aria-label={`Preview of template ${activeTemplate.label}`}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className={styles.status}>Select a template to preview.</div>
-                      )}
-                    </>
-                  ) : (
-                    <div className={styles.status}>No templates defined yet.</div>
-                  )}
-                  </div>
-                </section>
-
-                <section className={`${styles.section} ${styles.sectionMockTemplates}`} id="email-mock-data" aria-label={PANEL_SECTION_LOOKUP["email-mock-data"].copy.title}>
-                  <div className={styles.mockGrid}>
-                  {emailTemplates.map(template => (
-                    <article key={template.id} className={`${styles.card} ${styles.mockCard}`}>
-                      <header className={styles.mockHeader}>
-                        <div>
-                          <span className={styles.mockBadge}>ID: {template.id}</span>
-                          <h4>{template.label}</h4>
-                        </div>
-                        <p className={styles.mockSubject}>{template.subject}</p>
-                      </header>
-
-                      <dl className={styles.mockRecipients}>
-                        <div>
-                          <dt>From</dt>
-                          <dd>{template.previewRecipients.from}</dd>
-                        </div>
-                        <div>
-                          <dt>To</dt>
-                          <dd>{template.previewRecipients.to}</dd>
-                        </div>
-                        <div>
-                          <dt>Preheader</dt>
-                          <dd>{template.preheader}</dd>
-                        </div>
-                      </dl>
-
-                      <ul className={styles.mockList}>
-                        {Object.entries(template.previewData).map(([key, value]) => {
-                          if (value == null || value === "") return null;
-                          const label = emailFieldLabels[key as keyof EmailSampleData] ?? key;
-                          const stringValue = String(value);
-                          const paragraphs = stringValue.split(/\n{2,}/);
-                          const isLong = stringValue.length > 140 || paragraphs.length > 1;
-                          return (
-                            <li key={key} className={styles.mockField}>
-                              <span className={styles.mockFieldLabel}>{label}</span>
-                              <span className={`${styles.mockFieldValue} ${isLong ? styles.mockFieldValueBlock : ""}`}>
-                                {isLong ? paragraphs.map((paragraph, idx) => (
-                                  <span key={`${key}-${idx}`}>{paragraph}</span>
-                                )) : stringValue}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </article>
-                  ))}
-                  </div>
-                </section>
+                <EmailsPanel templatesAvailable={templatesAvailable} activeTemplateId={activeTemplateId} setActiveTemplateId={setActiveTemplateId} activeTemplate={activeTemplate} previewHtml={previewHtml} />
               </div>
             </div>
           )}
