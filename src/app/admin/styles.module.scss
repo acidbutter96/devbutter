@@ -376,7 +376,7 @@ $input-border: rgba(255, 255, 255, 0.08);
   overflow-y: auto;
   scrollbar-gutter: stable;
   /* Add small top padding so section content isn't hidden behind the fixed admin nav */
-  padding-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.5rem);
+  // padding-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.5rem);
   scroll-margin-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.5rem);
   height: 45rem;
 

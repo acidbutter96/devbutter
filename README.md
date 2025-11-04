@@ -42,6 +42,28 @@ This project includes a simple administrative API route at `/api/admin` protecte
 Environment variables (add to your `.env` or environment):
 
 - `ADMIN_EMAIL` — email used for basic auth username
+
+Local email testing with Mailpit
+--------------------------------
+
+To test sending emails locally using Mailpit (SMTP + Web UI), you can run the provided Docker compose file:
+
+```bash
+docker compose -f docker-compose.mailpit.yml up -d
+```
+
+This exposes:
+- SMTP on localhost:1025
+- Mailpit web UI on http://localhost:8025
+
+Set the following environment variables for the app (for local development you can use a `.env` file):
+
+- SMTP_HOST=localhost
+- SMTP_PORT=1025
+- SMTP_FROM="DevButter <oi@devbutter.com>"
+- (SMTP_USER and SMTP_PASS not required for Mailpit)
+
+When you use the admin "Send reply" action, the app will send the email via the configured SMTP server and you can inspect it in the Mailpit web UI.
 - `ADMIN_PASSWORD` — password used for basic auth
 
 If you have a MongoDB connection configured via `MONGODB_URI`, the route will store projects in the `projects` collection. If `MONGODB_URI` is not set, the route falls back to a local JSON file at `data/projects.json`.

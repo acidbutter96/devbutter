@@ -219,6 +219,34 @@ export default function AdminPage(): React.JSX.Element {
     return flattenedMessages.find(message => message.key === selectedMessageKey) ?? null;
   }, [flattenedMessages, selectedMessageKey]);
 
+  const selectedConversation = React.useMemo(() => {
+    if (!selectedMessage) return [] as any[];
+    const submission = formSubmissions.find(s => s._id === selectedMessage.submissionId);
+    if (!submission || !Array.isArray(submission.messages)) return [] as any[];
+
+    const rootId = selectedMessage.messageId;
+    const all = submission.messages as any[];
+
+    // include the original message and any replies that reference replyToMessageId === rootId
+    const conversation = all.filter(m => {
+      // when messageId is missing, fall back to createdAt comparison
+      if (rootId) {
+        if (m.messageId && String(m.messageId) === String(rootId)) return true;
+        if (m.replyToMessageId && String(m.replyToMessageId) === String(rootId)) return true;
+      }
+      return false;
+    }).map(m => ({ ...m }));
+
+    // sort chronological ascending
+    conversation.sort((a, b) => {
+      const at = new Date(a.createdAt).getTime();
+      const bt = new Date(b.createdAt).getTime();
+      return at - bt;
+    });
+
+    return conversation;
+  }, [formSubmissions, selectedMessage]);
+
   const panelSections = PANEL_SECTIONS;
   const navCopy = PANEL_SECTION_LOOKUP[activeSectionId]?.copy ?? PANEL_SECTION_LOOKUP["overview"].copy;
 
@@ -504,6 +532,56 @@ export default function AdminPage(): React.JSX.Element {
     }
   }
 
+  async function sendReply(submissionId: string, messageId: string | null, replyMessage: string) {
+    if (!token) throw new Error('Not authenticated');
+
+    // optimistic UI update — append a reply entry locally so the user sees it immediately
+    const localReply = {
+      messageId: `local-${String(Date.now())}`,
+      createdAt: new Date().toISOString(),
+      message: replyMessage,
+      subject: null,
+      telephone: null,
+      name: process.env.NEXT_PUBLIC_ADMIN_NAME ?? 'Admin',
+      fromAdmin: true,
+      adminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL ?? 'oi@devbutter.com',
+      replyToMessageId: messageId ?? null,
+    } as any;
+
+    setFormSubmissions(prev => prev.map(s => {
+      if (s._id !== submissionId) return s;
+      return { ...s, messages: [...s.messages, localReply] };
+    }));
+
+    try {
+      const res = await fetch('/api/admin/formSubmissions/reply', {
+        method: 'POST',
+        headers: {
+          Authorization: bearerHeader(token),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ submissionId, messageId, replyMessage, adminName: process.env.NEXT_PUBLIC_ADMIN_NAME, adminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL }),
+      });
+
+      if (res.status === 401) {
+        setAuthed(false);
+        setError('Not authorized');
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`Failed with status ${res.status}`);
+      }
+
+      // refresh from server to get canonical IDs and state
+      void fetchFormSubmissions();
+    } catch (err) {
+      setSubmissionsError('Unable to send reply');
+      // refetch to restore original state
+      void fetchFormSubmissions();
+    }
+  }
+
   function logout() {
     // call logout endpoint to remove server-side session, then clear client state
     try {
@@ -645,6 +723,8 @@ export default function AdminPage(): React.JSX.Element {
                   selectedMessage={selectedMessage}
                   formatTimestamp={formatTimestamp}
                   fetchFormSubmissions={() => void fetchFormSubmissions()}
+                  selectedConversation={selectedConversation}
+                  sendReply={async (submissionId: string, messageId: string | null, replyMessage: string) => void sendReply(submissionId, messageId, replyMessage)}
                 />
 
                 <ProjectsPanel

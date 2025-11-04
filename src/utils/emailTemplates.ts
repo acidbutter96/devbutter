@@ -29,6 +29,9 @@ export interface EmailTemplate {
     buildHtml: (data: EmailSampleData) => string;
 }
 
+// Base URL used across templates. Trim trailing slash for consistency.
+const baseUrl = (process.env.NEXT_APP_URL || 'https://devbutter.tech').replace(/\/$/, '');
+
 const palette = {
     outerBg: "#0f1120",
     surface: "#141628",
@@ -109,6 +112,7 @@ function renderInfoList(items: Array<{ label: string; value: string }>): string 
 function renderEmailShell(preheader: string, inner: string): string {
     const year = new Date().getFullYear();
     const safePreheader = escapeHtml(preheader);
+    const safeBaseUrl = escapeHtml(baseUrl);
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -135,7 +139,7 @@ function renderEmailShell(preheader: string, inner: string): string {
           <tr>
             <td style="text-align:center; font-size:12px; color:${palette.mutedText}; padding:12px 24px; line-height:1.5;">
               <p style="margin:0 0 4px 0;">© ${year} DevButter. All rights reserved.</p>
-              <p style="margin:0;"><a href="https://devbutter.com" style="color:${palette.accentTeal}; text-decoration:none;">devbutter.com</a></p>
+              <p style="margin:0;"><a href="${safeBaseUrl}" style="color:${palette.accentTeal}; text-decoration:none;">${safeBaseUrl.replace(/^https?:\/\//, '')}</a></p>
             </td>
           </tr>
         </table>
@@ -203,7 +207,7 @@ export const emailTemplates: EmailTemplate[] = [
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0;">
       <tr>
         <td>
-          <a href="https://devbutter.com" style="display:inline-block; padding:14px 26px; border-radius:999px; background:linear-gradient(120deg, ${palette.accentPinkStrong}, ${palette.accentPink}); color:${palette.textPrimary}; font-weight:600; text-decoration:none;">Browse portfolio</a>
+          <a href="${baseUrl}" style="display:inline-block; padding:14px 26px; border-radius:999px; background:linear-gradient(120deg, ${palette.accentPinkStrong}, ${palette.accentPink}); color:${palette.textPrimary}; font-weight:600; text-decoration:none;">Browse portfolio</a>
         </td>
       </tr>
     </table>
@@ -256,7 +260,7 @@ export const emailTemplates: EmailTemplate[] = [
             const infoHtml = renderInfoList(infoItems);
             const messageHtml = formatParagraphs(data.message) || `<p style="margin:0; font-size:16px; line-height:1.6; color:${palette.textSecondary};">No additional message was provided.</p>`;
 
-            const adminPanelUrl = "https://devbutter.com/admin";
+            const adminPanelUrl = `${baseUrl}/admin`;
 
             const inner = `
 <tr>

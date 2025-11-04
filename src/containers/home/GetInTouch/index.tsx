@@ -205,7 +205,7 @@ export const GetInTouch = (): React.JSX.Element => {
                     <div className={styles.textColumn}>
                         <div className={styles.titleRow}>
                             <h3>
-                                Shoot your idea — <span className={styles.pinkText}>we’ll code the magic!</span>
+                                Shoot your idea — <span className={styles.pinkText}>we&apos;ll code the magic!</span>
                             </h3>
                         </div>
                         <div className={styles.textRow}>
