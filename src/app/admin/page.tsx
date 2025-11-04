@@ -618,17 +618,16 @@ export default function AdminPage(): React.JSX.Element {
             <Login email={email} password={password} setEmail={setEmail} setPassword={setPassword} loading={loading} error={error} onLogin={onLogin} />
           ) : (
             <div ref={panelRef} className={styles.panel}>
-              <div ref={navRef}>
-                <Nav
-                  panelSections={panelSections.map(s => ({ id: s.id, label: s.label }))}
-                  activeSectionId={activeSectionId}
-                  navCopy={navCopy}
-                  unreadCount={unreadCount}
-                  onScrollToSection={(id: string) => scrollToSection(id as PanelSectionId)}
-                  refreshProjects={fetchProjects}
-                  logout={logout}
-                />
-              </div>
+              <Nav
+                ref={navRef}
+                panelSections={panelSections.map(s => ({ id: s.id, label: s.label }))}
+                activeSectionId={activeSectionId}
+                navCopy={navCopy}
+                unreadCount={unreadCount}
+                onScrollToSection={(id: string) => scrollToSection(id as PanelSectionId)}
+                refreshProjects={fetchProjects}
+                logout={logout}
+              />
 
               <div className={styles.panelSections}>
                 <span id="overview" className={styles.sectionSentinel} aria-hidden="true" />

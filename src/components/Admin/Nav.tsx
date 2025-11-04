@@ -18,9 +18,9 @@ interface Props {
   logout: () => void;
 }
 
-export default function Nav({ panelSections, activeSectionId, navCopy, unreadCount, onScrollToSection, refreshProjects, logout }: Props) {
+const Nav = ({ panelSections, activeSectionId, navCopy, unreadCount, onScrollToSection, refreshProjects, logout }: Props, ref: React.Ref<HTMLDivElement>) => {
   return (
-    <div className={styles.adminNav}>
+    <div ref={ref} className={styles.adminNav}>
       <div className={styles.adminNavContent}>
         <div className={styles.adminNavCopy}>
           <h2>{navCopy.title}</h2>
@@ -49,7 +49,10 @@ export default function Nav({ panelSections, activeSectionId, navCopy, unreadCou
             ) : null}
           </button>
         ))}
+
       </nav>
     </div>
   );
-}
+};
+
+export default React.forwardRef<HTMLDivElement, Props>(Nav);

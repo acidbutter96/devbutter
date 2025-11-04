@@ -250,6 +250,7 @@ $input-border: rgba(255, 255, 255, 0.08);
   flex-direction: column;
   gap: clamp(2rem, 4vw, 3rem);
   padding-top: calc(var(--admin-nav-height) + var(--admin-panel-offset));
+  padding-top: 25rem;
 }
 
 .adminNav {
@@ -362,7 +363,8 @@ $input-border: rgba(255, 255, 255, 0.08);
   height: 1px;
   width: 100%;
   pointer-events: none;
-  scroll-margin-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset));
+  /* Slightly smaller offset so anchor scrolls land below the fixed admin nav */
+  scroll-margin-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.75rem);
 }
 
 .section {
@@ -373,7 +375,9 @@ $input-border: rgba(255, 255, 255, 0.08);
   max-height: calc(100vh - (var(--admin-nav-height, 0px) + var(--admin-panel-offset)));
   overflow-y: auto;
   scrollbar-gutter: stable;
-  scroll-margin-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset));
+  /* Add small top padding so section content isn't hidden behind the fixed admin nav */
+  padding-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.5rem);
+  scroll-margin-top: calc(var(--admin-nav-height, 0px) + var(--admin-panel-offset) + 0.5rem);
   height: 45rem;
 
   margin: 10rem 0;
