@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import getDb from "@/services/mongo";
+import { ObjectId } from "mongodb";
 
 interface FormBody {
   name?: string;
@@ -10,11 +11,13 @@ interface FormBody {
 }
 
 interface MessageEntry {
+  messageId: ObjectId;
   createdAt: Date;
   message: string | null;
   subject: string | null;
   telephone: string | null;
   name: string | null;
+  read: boolean;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -43,11 +46,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (existing) {
       // Build the message object for this submission
       const messageObj: MessageEntry = {
+        messageId: new ObjectId(),
         createdAt: new Date(),
         message: body.message ?? null,
         subject: body.subject ?? null,
         telephone: body.telephone ?? null,
         name: body.name ?? existing.name ?? null,
+        read: false,
       };
 
       const update: any = {
@@ -62,17 +67,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // No existing document - create a new one with messages as an array of objects
     const firstMessage: MessageEntry = {
+      messageId: new ObjectId(),
       createdAt: new Date(),
       message: body.message ?? null,
       subject: body.subject ?? null,
       telephone: body.telephone ?? null,
       name: body.name ?? null,
+      read: false,
     };
 
     const doc = {
       email: normalizedEmail,
       messages: [firstMessage],
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const result = await collection.insertOne(doc);

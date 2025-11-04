@@ -7,7 +7,7 @@ import { emailTemplates, type EmailSampleData } from "@/utils/emailTemplates";
 
 type EmailTemplateConfig = (typeof emailTemplates)[number];
 
-type PanelSectionId = "overview" | "projects" | "emails" | "email-mock-data";
+type PanelSectionId = "overview" | "projects" | "form-submissions" | "emails" | "email-mock-data";
 
 interface PanelSectionCopy {
   title: string;
@@ -27,6 +27,14 @@ const PANEL_SECTIONS: PanelSectionConfig[] = [
     copy: {
       title: "Admin dashboard",
       description: "Keep projects and internal content organized.",
+    },
+  },
+  {
+    id: "form-submissions",
+    label: "Notifications",
+    copy: {
+      title: "Notifications",
+      description: "Track and review incoming form submissions.",
     },
   },
   {
@@ -86,6 +94,43 @@ interface Project {
 
 const AUTH_KEY = "devbutter_admin_auth";
 
+function formatTimestamp(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown date";
+  }
+
+  return date.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+interface SubmissionMessage {
+  messageId: string | null;
+  createdAt: string;
+  message: string | null;
+  subject: string | null;
+  telephone: string | null;
+  name: string | null;
+  read: boolean;
+}
+
+interface FormSubmission {
+  _id: string;
+  email: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+  messages: SubmissionMessage[];
+}
+
+interface FlattenedSubmissionMessage extends SubmissionMessage {
+  key: string;
+  submissionId: string;
+  fallbackCreatedAt: string;
+  email: string;
+}
+
 export default function AdminPage(): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,6 +139,12 @@ export default function AdminPage(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSectionId, setActiveSectionId] = useState<PanelSectionId>("overview");
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+  const [submissionsError, setSubmissionsError] = useState<string | null>(null);
+  const [selectedMessageKey, setSelectedMessageKey] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 3;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -102,6 +153,8 @@ export default function AdminPage(): React.JSX.Element {
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
+  const observerSuppressRef = useRef(false);
+  const observerSuppressTimeoutRef = useRef<number | null>(null);
 
   const templatesAvailable = emailTemplates.length > 0;
   const [activeTemplateId, setActiveTemplateId] = useState(() => (templatesAvailable ? emailTemplates[0].id : ""));
@@ -113,6 +166,52 @@ export default function AdminPage(): React.JSX.Element {
     if (!activeTemplate) return "";
     return activeTemplate.buildHtml(activeTemplate.previewData);
   }, [activeTemplate]);
+
+  const flattenedMessages = React.useMemo<FlattenedSubmissionMessage[]>(() => {
+    const items: FlattenedSubmissionMessage[] = [];
+    formSubmissions.forEach(submission => {
+      const messages = Array.isArray(submission.messages) ? submission.messages : [];
+      messages.forEach((message, index) => {
+        const keyBase = message.messageId ?? `legacy-${submission._id}-${message.createdAt ?? index}`;
+        items.push({
+          ...message,
+          key: keyBase,
+          submissionId: submission._id,
+          fallbackCreatedAt: message.createdAt,
+          email: submission.email,
+        });
+      });
+    });
+
+    return items.sort((a, b) => {
+      const aTime = new Date(a.createdAt).getTime();
+      const bTime = new Date(b.createdAt).getTime();
+      if (Number.isNaN(aTime) && Number.isNaN(bTime)) return 0;
+      if (Number.isNaN(aTime)) return 1;
+      if (Number.isNaN(bTime)) return -1;
+      return bTime - aTime;
+    });
+  }, [formSubmissions]);
+
+  const totalPages = Math.max(1, Math.ceil(flattenedMessages.length / ITEMS_PER_PAGE));
+
+  // Reset to first page when the message list changes (new data) so users see
+  // the most recent items by default.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [flattenedMessages.length]);
+
+  const paginatedMessages = React.useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return flattenedMessages.slice(start, start + ITEMS_PER_PAGE);
+  }, [flattenedMessages, currentPage]);
+
+  const unreadCount = React.useMemo(() => flattenedMessages.reduce((acc, message) => (message.read ? acc : acc + 1), 0), [flattenedMessages]);
+
+  const selectedMessage = React.useMemo(() => {
+    if (!selectedMessageKey) return null;
+    return flattenedMessages.find(message => message.key === selectedMessageKey) ?? null;
+  }, [flattenedMessages, selectedMessageKey]);
 
   const panelSections = PANEL_SECTIONS;
   const navCopy = PANEL_SECTION_LOOKUP[activeSectionId]?.copy ?? PANEL_SECTION_LOOKUP["overview"].copy;
@@ -139,6 +238,32 @@ export default function AdminPage(): React.JSX.Element {
     }
   }, [authed]);
 
+  useEffect(() => {
+    return () => {
+      if (observerSuppressTimeoutRef.current != null) {
+        window.clearTimeout(observerSuppressTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (flattenedMessages.length === 0) {
+      if (selectedMessageKey) {
+        setSelectedMessageKey(null);
+      }
+      return;
+    }
+
+    if (!selectedMessageKey) {
+      return;
+    }
+
+    const currentExists = flattenedMessages.some(message => message.key === selectedMessageKey);
+    if (!currentExists) {
+      setSelectedMessageKey(null);
+    }
+  }, [flattenedMessages, selectedMessageKey]);
+
   function basicHeader(e: string, p: string) {
     return "Basic " + btoa(`${e}:${p}`);
   }
@@ -158,6 +283,7 @@ export default function AdminPage(): React.JSX.Element {
         setProjects(Array.isArray(data) ? data : []);
         setAuthed(true);
         sessionStorage.setItem(AUTH_KEY, JSON.stringify({ email: e, password: p }));
+        void fetchFormSubmissions(e, p);
       } else if (res.status === 401) {
         setAuthed(false);
         setError("Invalid credentials");
@@ -192,6 +318,48 @@ export default function AdminPage(): React.JSX.Element {
       setError("Unable to load projects");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchFormSubmissions(overrideEmail?: string, overridePassword?: string) {
+    const authEmail = overrideEmail ?? email;
+    const authPassword = overridePassword ?? password;
+    if (!authEmail || !authPassword) return;
+
+    setSubmissionsLoading(true);
+    setSubmissionsError(null);
+
+    try {
+      const res = await fetch(`/api/admin/formSubmissions`, {
+        method: "GET",
+        headers: { Authorization: basicHeader(authEmail, authPassword) },
+      });
+
+      if (res.status === 401) {
+        setAuthed(false);
+        setError("Not authorized");
+        setFormSubmissions([]);
+        setSelectedMessageKey(null);
+        return;
+      }
+
+      if (!res.ok) {
+        setSubmissionsError(`Error: ${res.status}`);
+        return;
+      }
+
+      const data: unknown = await res.json();
+      if (!Array.isArray(data)) {
+        setSubmissionsError("Unexpected response while loading submissions");
+        setFormSubmissions([]);
+        return;
+      }
+
+      setFormSubmissions(data as FormSubmission[]);
+    } catch (err) {
+      setSubmissionsError("Unable to load form submissions");
+    } finally {
+      setSubmissionsLoading(false);
     }
   }
 
@@ -230,19 +398,99 @@ export default function AdminPage(): React.JSX.Element {
     }
   }
 
+  async function markMessageAsRead(message: FlattenedSubmissionMessage) {
+    if (message.read) return;
+
+    setSubmissionsError(null);
+
+    setFormSubmissions(prev =>
+      prev.map(submission => {
+        if (submission._id !== message.submissionId) {
+          return submission;
+        }
+
+        return {
+          ...submission,
+          messages: submission.messages.map(entry => {
+            const matchById = message.messageId && entry.messageId === message.messageId;
+            const matchByCreatedAt = !message.messageId && entry.createdAt === message.fallbackCreatedAt;
+            if (matchById || matchByCreatedAt) {
+              return { ...entry, read: true };
+            }
+            return entry;
+          }),
+        };
+      })
+    );
+
+    const authEmail = email;
+    const authPassword = password;
+    if (!authEmail || !authPassword) return;
+
+    const payload: Record<string, unknown> = {
+      submissionId: message.submissionId,
+    };
+
+    if (message.messageId) {
+      payload.messageId = message.messageId;
+    } else if (message.fallbackCreatedAt) {
+      payload.createdAt = message.fallbackCreatedAt;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/formSubmissions`, {
+        method: "PATCH",
+        headers: {
+          Authorization: basicHeader(authEmail, authPassword),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 401) {
+        setAuthed(false);
+        setError("Not authorized");
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`Failed with status ${res.status}`);
+      }
+    } catch (err) {
+      setSubmissionsError("Unable to update message status");
+      void fetchFormSubmissions();
+    }
+  }
+
+  function handleSelectMessage(message: FlattenedSubmissionMessage) {
+    setSelectedMessageKey(prev => (prev === message.key ? prev : message.key));
+    if (!message.read) {
+      void markMessageAsRead(message);
+    }
+  }
+
   function logout() {
     sessionStorage.removeItem(AUTH_KEY);
     setAuthed(false);
     setEmail("");
     setPassword("");
     setProjects([]);
+    setFormSubmissions([]);
+    setSelectedMessageKey(null);
+    setSubmissionsError(null);
+    setSubmissionsLoading(false);
   }
 
   function scrollToSection(sectionId: PanelSectionId) {
-  if (!PANEL_SECTION_LOOKUP[sectionId]) return;
+    if (!PANEL_SECTION_LOOKUP[sectionId]) return;
 
-  const el = document.getElementById(sectionId);
-  if (!el) return;
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+
+    observerSuppressRef.current = true;
+    if (observerSuppressTimeoutRef.current != null) {
+      window.clearTimeout(observerSuppressTimeoutRef.current);
+    }
 
     const navHeight = navRef.current?.getBoundingClientRect().height ?? 0;
     const offset = navHeight + 24;
@@ -250,6 +498,10 @@ export default function AdminPage(): React.JSX.Element {
 
     setActiveSectionId(prev => (prev === sectionId ? prev : sectionId));
     window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
+
+    observerSuppressTimeoutRef.current = window.setTimeout(() => {
+      observerSuppressRef.current = false;
+    }, 600);
   }
 
   useEffect(() => {
@@ -287,6 +539,10 @@ export default function AdminPage(): React.JSX.Element {
 
     const observer = new IntersectionObserver(
       entries => {
+        if (observerSuppressRef.current) {
+          return;
+        }
+
         const visible = entries
           .filter(entry => entry.isIntersecting)
           .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
@@ -365,10 +621,16 @@ export default function AdminPage(): React.JSX.Element {
                     <button
                       key={section.id}
                       type="button"
-                      className={styles.panelNavButton}
+                      className={`${styles.panelNavButton} ${section.id === activeSectionId ? styles.panelNavButtonActiveSection : ""}`}
+                      aria-pressed={section.id === activeSectionId}
                       onClick={() => scrollToSection(section.id)}
                     >
-                      {section.label}
+                      <span>{section.label}</span>
+                      {section.id === "form-submissions" && unreadCount > 0 ? (
+                        <span className={styles.panelNavButtonBadge} aria-label={`${unreadCount} unread notifications`}>
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      ) : null}
                     </button>
                   ))}
                 </nav>
@@ -376,6 +638,143 @@ export default function AdminPage(): React.JSX.Element {
 
               <div className={styles.panelSections}>
                 <span id="overview" className={styles.sectionSentinel} aria-hidden="true" />
+
+                <section
+                  className={`${styles.section} ${styles.sectionNotifications}`}
+                  id="form-submissions"
+                  aria-label={PANEL_SECTION_LOOKUP["form-submissions"].copy.title}
+                >
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionSubheading}>
+                      <h4>Form submissions</h4>
+                      <p>Review and respond to the most recent contact form entries.</p>
+                    </div>
+                    <div className={styles.sectionActions}>
+                      <button
+                        className={styles.secondaryButton}
+                        type="button"
+                        onClick={() => fetchFormSubmissions()}
+                        disabled={submissionsLoading}
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+
+                  {submissionsError && <div className={styles.error} role="alert">{submissionsError}</div>}
+
+                  <div className={styles.notificationsLayout}>
+                    <div className={`${styles.card} ${styles.notificationList}`}>
+                      <div className={styles.notificationListHeader}>
+                        <h5>Inbox</h5>
+                        <span className={styles.notificationListCount}>{flattenedMessages.length}</span>
+                      </div>
+
+                      {submissionsLoading ? (
+                        <div className={styles.status}>Loading...</div>
+                      ) : flattenedMessages.length === 0 ? (
+                        <div className={styles.status}>No submissions yet.</div>
+                      ) : (
+                        <>
+                          <ul className={styles.notificationItems}>
+                            {paginatedMessages.map(item => {
+                            const isActive = item.key === selectedMessageKey;
+                            const displayName = item.name?.trim() || "Anonymous";
+                            const previewSource = item.message ? item.message.replace(/\s+/g, " ") : "No message provided";
+                            const preview = previewSource.length > 140 ? `${previewSource.slice(0, 140)}...` : previewSource;
+
+                            return (
+                              <li key={item.key}>
+                                <button
+                                  type="button"
+                                  className={`${styles.notificationItem} ${isActive ? styles.notificationItemActive : ""} ${item.read ? "" : styles.notificationItemUnread}`}
+                                  onClick={() => handleSelectMessage(item)}
+                                >
+                                  <div className={styles.notificationItemHeader}>
+                                    <span className={styles.notificationItemTitle}>{displayName}</span>
+                                    <div className={styles.notificationItemMeta}>
+                                      {!item.read && <span className={styles.notificationUnreadDot} aria-hidden="true" />}
+                                      <time dateTime={item.createdAt}>{formatTimestamp(item.createdAt)}</time>
+                                    </div>
+                                  </div>
+                                  <span className={styles.notificationItemEmail}>{item.email}</span>
+                                  {item.subject && <span className={styles.notificationItemSubject}>{item.subject}</span>}
+                                  <p className={styles.notificationItemPreview}>{preview}</p>
+                                </button>
+                              </li>
+                            );
+                          })}
+                          </ul>
+
+                          {/* Pagination controls */}
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.5rem" }}>
+                            <div style={{ color: "rgba(255,255,255,0.72)", fontSize: "0.9rem" }}>
+                              Showing {Math.min(flattenedMessages.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} - {Math.min(flattenedMessages.length, currentPage * ITEMS_PER_PAGE)} of {flattenedMessages.length}
+                            </div>
+                            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                              <button
+                                type="button"
+                                className={styles.ghostButton}
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                              >
+                                Prev
+                              </button>
+                              <span style={{ color: "rgba(255,255,255,0.72)", fontSize: "0.9rem" }}>Page {currentPage} / {totalPages}</span>
+                              <button
+                                type="button"
+                                className={styles.ghostButton}
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                              >
+                                Next
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className={`${styles.card} ${styles.notificationDetail}`}>
+                      {selectedMessage ? (
+                        <>
+                          <header className={styles.notificationDetailHeader}>
+                            <div>
+                              <h4>{selectedMessage.subject || "No subject"}</h4>
+                              <time dateTime={selectedMessage.createdAt}>{formatTimestamp(selectedMessage.createdAt)}</time>
+                            </div>
+                            {!selectedMessage.read && <span className={styles.badge}>New</span>}
+                          </header>
+
+                          <dl className={styles.notificationDetailMeta}>
+                            <div>
+                              <dt>From</dt>
+                              <dd>{selectedMessage.name ? `${selectedMessage.name} - ${selectedMessage.email}` : selectedMessage.email}</dd>
+                            </div>
+                            {selectedMessage.telephone ? (
+                              <div>
+                                <dt>Phone</dt>
+                                <dd>{selectedMessage.telephone}</dd>
+                              </div>
+                            ) : null}
+                          </dl>
+
+                          <div className={styles.notificationDetailBody}>
+                            {selectedMessage.message ? (
+                              selectedMessage.message.split(/\n{2,}/).map((paragraph, paragraphIndex) => (
+                                <p key={`${selectedMessage.key}-paragraph-${paragraphIndex}`}>{paragraph}</p>
+                              ))
+                            ) : (
+                              <p>No message content provided.</p>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className={styles.status}>Select a message to preview.</div>
+                      )}
+                    </div>
+                  </div>
+                </section>
 
                 <section className={styles.section} id="projects" aria-label={PANEL_SECTION_LOOKUP["projects"].copy.title}>
                   <div className={styles.sectionGrid}>
