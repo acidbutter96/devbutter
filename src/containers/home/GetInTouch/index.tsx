@@ -83,7 +83,7 @@ export const GetInTouch = (): React.JSX.Element => {
                                         </h3>
                                     </div>
                                     <div className={styles.textRow}>
-                                        <p>Your message was successfully delivered. Thank you — we'll get back to you soon.</p>
+                                        <p>Your message was successfully delivered. Thank you — we&apos;ll get back to you soon.</p>
                                         <p>You can send another message in up to 1 hour.</p>
                                     </div>
                                 </div>

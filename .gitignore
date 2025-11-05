@@ -22,6 +22,10 @@ pnpm-debug.log*
 # Local env files
 .env*
 
+# Maildir used for local docker-mailserver (store mail delivered to local users)
+maildata/
+mailpit-data/
+
 # Vercel
 .vercel/
 

@@ -82,5 +82,57 @@ curl -u "$ADMIN_EMAIL:$ADMIN_PASSWORD" http://localhost:3000/api/admin
 # add a project
 curl -u "$ADMIN_EMAIL:$ADMIN_PASSWORD" -X POST -H "Content-Type: application/json" \
 	-d '{"title":"My project","description":"Short desc","link":"https://...","repo":"https://github.com/..."}' \
-	http://localhost:3000/api/admin
+http://localhost:3000/api/admin
 ```
+
+## Vercel: IMAP check job & environment variables
+
+This project provides a serverless API route `/api/imap-check` that performs a single IMAP check
+(connect -> fetch UNSEEN -> append to `formSubmissions` -> close). To run it on Vercel you must
+configure environment variables and schedule periodic invocations.
+
+Required environment variables (set in Vercel Project Settings → Environment Variables):
+
+- `MONGODB_URI` — MongoDB connection string used by the API.
+- `IMAP_HOST` — IMAP server hostname (e.g. `imap.hostinger.com`).
+- `IMAP_PORT` — IMAP port (default `993`).
+- `IMAP_USER` — IMAP username (email).
+- `IMAP_PASS` — IMAP password.
+- `MAILBOX` — optional, mailbox/folder to check (default `INBOX`).
+- `IMAP_CHECK_SECRET` — optional shared secret to protect the endpoint. If set, callers must include header `x-imap-secret: <secret>`.
+
+- `IMAP_CHECK_SECRET` — optional shared secret to protect ad-hoc calls to the endpoint. If set, callers must include header `x-imap-secret: <secret>`.
+- `CRON_SECRET` — when using Vercel Cron, Vercel will include this secret in the `Authorization` header as `Bearer <CRON_SECRET>`. Set this in Vercel Project Settings and keep it secret.
+
+Security note: do not commit credentials to the repository. Use Vercel's UI to add these values for Production and Preview environments.
+
+Scheduling options
+- Vercel Cron (recommended if available): configure a Cron Job to POST to `https://<your-deployment>/api/imap-check` at your desired interval and include the `x-imap-secret` header.
+ - Vercel Cron (recommended if available): configure a Cron Job to POST to `https://<your-deployment>/api/imap-check` at your desired interval. Vercel will include the `Authorization: Bearer <CRON_SECRET>` header automatically for cron jobs — set `CRON_SECRET` in your Vercel Project Settings.
+- GitHub Actions: create a workflow that runs on a schedule and calls the endpoint. Example `.github/workflows/imap-check.yml`:
+
+```yaml
+name: Run IMAP check
+on:
+	schedule:
+		- cron: '*/5 * * * *' # every 5 minutes
+	workflow_dispatch:
+
+jobs:
+	call-imap:
+		runs-on: ubuntu-latest
+		steps:
+			- name: Call IMAP check
+				run: |
+					curl -X POST \
+						-H "x-imap-secret: ${{ secrets.IMAP_CHECK_SECRET }}" \
+						"https://your-deployment.vercel.app/api/imap-check"
+
+```
+
+Replace `your-deployment.vercel.app` with your Vercel production domain and add `IMAP_CHECK_SECRET` as a GitHub Secret.
+
+Local testing
+- You can run the local worker (`scripts/imapWorker.mjs`) or call the route locally after setting the same env vars in a local `.env` file.
+
+If you'd like, I can add the GitHub Actions workflow file to this repo and a short example of a curl command to test the endpoint.

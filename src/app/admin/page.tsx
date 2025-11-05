@@ -173,22 +173,67 @@ export default function AdminPage(): React.JSX.Element {
     return activeTemplate.buildHtml(activeTemplate.previewData);
   }, [activeTemplate]);
 
+  // Build one notification card per submission (one card == one email). The card's
+  // ordering and preview are driven by the most recent *user* message if available;
+  // otherwise we fall back to the most recent message (so admin replies do not
+  // bump a card to the top).
   const flattenedMessages = React.useMemo<FlattenedSubmissionMessage[]>(() => {
     const items: FlattenedSubmissionMessage[] = [];
+
     formSubmissions.forEach(submission => {
       const messages = Array.isArray(submission.messages) ? submission.messages : [];
-      messages.forEach((message, index) => {
-        const keyBase = message.messageId ?? `legacy-${submission._id}-${message.createdAt ?? index}`;
+      if (messages.length === 0) {
+        // create a minimal item if there are no messages
         items.push({
-          ...message,
-          key: keyBase,
+          messageId: null,
+          createdAt: submission.updatedAt ?? submission.createdAt ?? new Date().toISOString(),
+          message: null,
+          subject: null,
+          telephone: null,
+          name: null,
+          read: true,
+          key: submission._id,
           submissionId: submission._id,
-          fallbackCreatedAt: message.createdAt,
+          fallbackCreatedAt: submission.updatedAt ?? submission.createdAt ?? new Date().toISOString(),
           email: submission.email,
         });
+        return;
+      }
+
+      // find the most recent user message (fromAdmin !== true)
+      const userMessages = messages.filter(m => !Boolean((m as any).fromAdmin));
+      const sortByDateDesc = (a: any, b: any) => new Date(String(b.createdAt)).getTime() - new Date(String(a.createdAt)).getTime();
+      let representative: any = null;
+
+      if (userMessages.length > 0) {
+        userMessages.sort(sortByDateDesc);
+        representative = userMessages[0];
+      } else {
+        // fallback to any message (most recent)
+        messages.sort(sortByDateDesc);
+        representative = messages[0];
+      }
+
+  // representative.messageId/_id are expected to be strings from the server API
+  const messageId = representative?.messageId ? String(representative.messageId) : (representative?._id ? String(representative._id) : null);
+      const createdAtIso = representative?.createdAt instanceof Date ? representative.createdAt.toISOString() : (typeof representative?.createdAt === 'string' ? representative.createdAt : new Date().toISOString());
+
+      items.push({
+        messageId: messageId ?? null,
+        createdAt: createdAtIso,
+        message: representative?.message ?? null,
+        subject: representative?.subject ?? null,
+        telephone: representative?.telephone ?? null,
+        name: representative?.name ?? null,
+        read: Boolean(representative?.read),
+        key: submission._id,
+        submissionId: submission._id,
+        fallbackCreatedAt: createdAtIso,
+        email: submission.email,
       });
     });
 
+    // order cards by most-recent relevant message (we used user-most-recent when possible)
     return items.sort((a, b) => {
       const aTime = new Date(a.createdAt).getTime();
       const bTime = new Date(b.createdAt).getTime();
