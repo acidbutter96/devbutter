@@ -49,6 +49,31 @@ body {
     overflow: hidden;
 }
 
+/* Ensure anchored sections and the first hero section are offset from the fixed header
+   so they don't end up hidden beneath it when linked/scrollIntoView is used. Also
+   make sections slightly taller on small devices (e.g. iPhone 12) for better spacing. */
+#devbutter, #projects, #experience, #getInTouch {
+    /* when browser scrolls to these ids, leave room for the fixed header */
+    scroll-margin-top: var(--header-height);
+}
+
+/* Push the hero content down so it doesn't sit directly under the fixed header. */
+#devbutter {
+    padding-top: var(--header-height);
+}
+
+/* On small/mobile screens (iPhone 12 ~390px width), increase the sections' min-height
+   a bit so content doesn't feel cramped. This applies to the main anchored sections. */
+@media (max-width: 430px) {
+    #devbutter, #projects, #experience, #getInTouch {
+        /* add extra vertical space: header height already accounted by scroll-margin-top */
+        min-height: calc(100vh - var(--header-height) + 6rem);
+        /* ensure some horizontal padding for very small screens */
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
 body, input, textarea, button {
     font: 500 1rem var(--font-roboto);
     color: var(--white);
