@@ -9,6 +9,7 @@ import imaps from 'imap-simple';
 import { simpleParser } from 'mailparser';
 import { ObjectId } from 'mongodb';
 import getDb from '@/services/mongo';
+import { extractReply } from '@/utils/extractReply';
 
 const IMAP_HOST = process.env.IMAP_HOST;
 const IMAP_PORT = Number(process.env.IMAP_PORT || 993);
@@ -57,6 +58,8 @@ async function runImapCheck(): Promise<Result> {
     const fetchOptions = { bodies: [''], markSeen: false } as any;
     const results = await connection.search(searchCriteria, fetchOptions);
 
+    // Using `extractReply` from utils to strip quoted original message, signatures and common separators.
+
     for (const res of results) {
       result.processed += 1;
       try {
@@ -68,7 +71,7 @@ async function runImapCheck(): Promise<Result> {
         const senderEmail = from?.address ?? String(parsed.from?.text ?? '');
         const senderName = from?.name ?? null;
         const subject = parsed.subject ?? null;
-        const text = parsed.text ?? parsed.html ?? '';
+  const text = extractReply(parsed.text ?? null, parsed.html ?? null) ?? String(parsed.text ?? parsed.html ?? '');
         const inReplyTo = parsed.headers && parsed.headers.get ? parsed.headers.get('in-reply-to') : null;
 
         // try to match by inReplyTo
