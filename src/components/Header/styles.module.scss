@@ -24,6 +24,16 @@
     border-bottom: .4px solid rgba(255,255,255,0.01);
 
     z-index: 10;
+
+    /* smooth transform and opacity transitions */
+    transition: transform .28s ease, opacity .28s ease;
+
+    /* collapsed state will translate the navbar out of view (used for mobile) */
+    &.collapsed {
+        transform: translateY(calc(-1 * var(--header-height)));
+        pointer-events: none;
+        opacity: 0; /* hide while collapsed */
+    }
 }
 
 .logoContainer {
@@ -64,6 +74,17 @@
 
     @media screen and (max-width: 430px) {
         display: none;
+    }
+}
+
+/* desktop: slightly transparent by default, fully visible on hover */
+@media screen and (min-width: 431px) {
+    .navbarContainer {
+        opacity: .85;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 }
 

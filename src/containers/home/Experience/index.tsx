@@ -12,7 +12,7 @@ export const Experience = (): React.JSX.Element => {
             </div>
             <div className={styles.secondRow}>
                 <div className={styles.personContainer}>
-                    <div className={styles.imageCotnainer}>
+                    <div className={styles.imageContainer}>
                         <Image src={"./person.svg"} width={0} height={0} alt={"person"} />
                     </div>
                     <div className={styles.electricFieldContainer}>
