@@ -8,21 +8,21 @@
     "start": "next start",
     "lint": "next lint",
     "create-indexes": "node scripts/createIndexes.mjs",
-    "migrate:seed-admin": "node scripts/migrateCreateAdmin.mjs"
-    ,"imap:worker": "node scripts/imapWorker.mjs"
+    "migrate:seed-admin": "node scripts/migrateCreateAdmin.mjs",
+    "imap:worker": "node scripts/imapWorker.mjs"
   },
   "dependencies": {
     "@devbutter/paint-background": "git+ssh://git@github.com:acidbutter96/paint-background.git#v1.0.2",
     "axios": "^1.6.8",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
+    "imap-simple": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mailparser": "^3.7.5",
     "mongodb": "^6.20.0",
     "net": "^1.0.2",
     "next": "14.1.3",
     "nodemailer": "^7.0.10",
-  "imap-simple": "^6.0.0",
-  "mailparser": "^3.7.5",
     "react": "^18",
     "react-dom": "^18",
     "react-multi-carousel": "^2.8.4"
