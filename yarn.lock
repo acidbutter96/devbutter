@@ -463,9 +463,9 @@
   resolved "https://registry.yarnpkg.com/@aws/lambda-invoke-store/-/lambda-invoke-store-0.1.1.tgz#2e67f17040b930bde00a79ffb484eb9e77472b06"
   integrity sha512-RcLam17LdlbSOSp9VxmUu1eI6Mwxp+OwhD2QhiSNmNCzoDb0EeUXTD2n/WbcnrAYMGlmf05th6QYq23VqvJqpA==
 
-"@devbutter/paint-background@git+ssh://git@github.com:acidbutter96/paint-background.git#v1.0.2":
+"@devbutter/paint-background@https://github.com/acidbutter96/paint-background.git#v1.0.2":
   version "1.0.2"
-  resolved "git+ssh://git@github.com:acidbutter96/paint-background.git#12a2bc643ac27d6d58bb16f476607d6f8e221858"
+  resolved "https://github.com/acidbutter96/paint-background.git#12a2bc643ac27d6d58bb16f476607d6f8e221858"
 
 "@emnapi/core@^1.4.3":
   version "1.5.0"

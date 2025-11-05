@@ -37,7 +37,21 @@ export default function EmailsPanel({ templatesAvailable, activeTemplateId, setA
         setImapLoading(true);
         setImapResult(null);
         try {
-            const res = await fetch('/api/imap-check', { method: 'POST' });
+            // include admin session token if available so the UI can call the protected endpoint
+            let headers: Record<string, string> = {};
+            try {
+                const saved = sessionStorage.getItem('devbutter_admin_auth');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.token) {
+                        headers['Authorization'] = `Bearer ${parsed.token}`;
+                    }
+                }
+            } catch (e) {
+                // ignore
+            }
+
+            const res = await fetch('/api/imap-check', { method: 'POST', headers });
             const json = await res.json().catch(() => null);
             if (!res.ok) {
                 setImapResult(`Error ${res.status}: ${json ? JSON.stringify(json) : res.statusText}`);

@@ -8,11 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "create-indexes": "node scripts/createIndexes.mjs",
+    "create-imap-indexes": "node scripts/createImapIndexes.mjs",
     "migrate:seed-admin": "node scripts/migrateCreateAdmin.mjs",
     "imap:worker": "node scripts/imapWorker.mjs"
   },
   "dependencies": {
-  "@devbutter/paint-background": "https://github.com/acidbutter96/paint-background.git#v1.0.2",
+    "@devbutter/paint-background": "https://github.com/acidbutter96/paint-background.git#v1.0.2",
     "axios": "^1.6.8",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
