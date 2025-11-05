@@ -355,3 +355,23 @@ $projectFontSize: 1.3125rem;
         }
     }
 }
+
+/* Responsive adjustments for Projects grid */
+@media screen and (max-width: 1024px) {
+    .secondRow {
+        .grid {
+            width: 100%;
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .secondRow {
+        .grid {
+            grid-template-columns: 1fr;
+            grid-row-gap: 1.25rem;
+        }
+        .projectContainer { padding: 2rem; }
+    }
+}

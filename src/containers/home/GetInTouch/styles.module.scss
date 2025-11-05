@@ -15,12 +15,13 @@ $projectFontSize: 1.3125rem;
 
     min-height: calc(100vh - 5rem);
 
-    background-color: var(--blue-50);
+    // background-color: var(--blue-50);
 
     z-index: 3;
 
     .backgroundImage {
         position: absolute;
+        display: none;
 
         height: 100%;
         width: 100vw;
@@ -334,4 +335,85 @@ $projectFontSize: 1.3125rem;
         
         width: 30rem;
     }
+}
+
+/* Responsive for contact / get-in-touch */
+@media screen and (max-width: 820px) {
+    .container { padding: 1.25rem; background-color: transparent;}
+
+    .backgroundImage { display: none; }
+    /* reverse column so the text column appears first on mobile */
+    .secondRow {
+        flex-direction: column-reverse;
+
+        padding-bottom: 10rem;
+
+        .contactFormColumn {
+            width: 100%;
+            padding-top: 1rem;
+        }
+
+        .textColumn {
+            width: 100%;
+
+            .socialMediaRow {
+                justify-content: center;
+            }
+        }
+
+        .halfRow {
+            width: 100%;
+        }
+    }
+    .contactFormColumn { width: 100%; padding-top: 1rem; }
+    /* ensure form takes full available width on small screens */
+    .contactFormColumn {
+        form { width: 100%; max-width: 100%; }
+        /* force inner rows to stack so halfRow fields become full-width */
+        .row { flex-direction: column; }
+    }
+    .halfRow { width: 100%; }
+    .textColumn {
+        width: 100%;
+        padding-left: 0;
+        .titleRow { h3 { font-size: 1.6rem; } }
+        .textRow { font-size: 1.15rem; line-height: 1.8rem; }
+        /* paragraph should occupy whole width and not be capped */
+        .textRow {
+            p { width: 100%; max-width: none; display: block; }
+        }
+    }
+    .buttonContainer .submitButton { width: 90%; font-size: 1.6rem; }
+    .successView .imageContainer { width: 18rem; }
+}
+
+
+@media screen and (min-width: 530px) {
+    .secondRow {
+        .textColumn {
+            min-height: 25rem;
+            padding-bottom: 10rem;
+
+            .socialMediaRow {
+                justify-content: center;
+            }
+        }
+
+        .halfRow {
+            width: 100%;
+        }
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .container { padding: 0.75rem; }
+    .textColumn .titleRow { h3 { font-size: 1.35rem; } }
+    .textColumn .textRow { font-size: 1rem; line-height: 1.5rem; }
+    .buttonContainer .submitButton { font-size: 1.4rem; width: 95%; }
+    .successView .imageContainer { width: 14rem; }
+
+    /* reinforce full width behaviour on very small screens */
+    .contactFormColumn { form { width: 100%; max-width: 100%; } }
+    .halfRow { width: 100%; }
+    .textColumn .textRow { p { width: 100%; max-width: none; } }
 }

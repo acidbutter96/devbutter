@@ -168,3 +168,63 @@ $height: calc(100vh - var(--header-height));
         }
     }
 }
+
+/* Mobile / tablet responsive adjustments */
+@media screen and (max-width: 1024px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .firstColumn, .secondColumn {
+        width: 100%;
+        height: auto;
+        padding-bottom: 4rem;
+    }
+
+    .firstColumn {
+        .titleContainer {
+            position: static;
+            left: auto;
+            top: auto;
+            width: 100%;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            .title { font-size: 2.4rem; }
+            .text { font-size: 1.6rem; }
+        }
+    }
+
+    .imageContainer {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .container {
+        padding: 0 1.25rem;
+    }
+
+    .firstColumn {
+        padding-bottom: 6rem;
+        .titleContainer {
+            padding: 1rem 0.5rem;
+            .title { font-size: 2rem; }
+            .text { font-size: 1.4rem; }
+        }
+    }
+
+    .imageContainer {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .swipeupContainer {
+        .swipeupButton { font-size: 1.2rem; }
+    }
+}
