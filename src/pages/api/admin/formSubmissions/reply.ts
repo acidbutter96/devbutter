@@ -10,6 +10,7 @@ async function createTransporter() {
   const port = Number(process.env.SMTP_PORT || 0) || 1025;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
+  const timeoutMs = Number(process.env.SMTP_TIMEOUT_MS || 5000);
 
   // For Mailpit local testing you usually don't need auth, but nodemailer
   // accepts empty auth values.
@@ -19,6 +20,10 @@ async function createTransporter() {
     secure: false,
     auth: user || pass ? { user: user ?? undefined, pass: pass ?? undefined } : undefined,
     tls: { rejectUnauthorized: false },
+    // guard against blocking socket/network calls in serverless environment
+    connectionTimeout: timeoutMs,
+    greetingTimeout: timeoutMs,
+    socketTimeout: timeoutMs,
   });
 
   return transporter;
@@ -110,18 +115,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const transporter = await createTransporter();
       const from = process.env.SMTP_FROM ?? `"${adminName}" <${adminEmail}>`;
-      const info = await transporter.sendMail({
-        from,
-        to: submissionDoc.email,
-        subject,
-        html,
-        text: replyMessage,
-      });
-
-      replyEntry.sendStatus = 'sent';
-      replyEntry.sendLog = info ? JSON.stringify(info) : null;
+      // enforce an explicit send timeout as an extra safety net
+      const sendTimeoutMs = Number(process.env.SMTP_SEND_TIMEOUT_MS || process.env.SMTP_TIMEOUT_MS || 5000);
+      const sendPromise = transporter.sendMail({ from, to: submissionDoc.email, subject, html, text: replyMessage });
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('sendMail timeout')), sendTimeoutMs));
+      try {
+        const info = await Promise.race([sendPromise, timeoutPromise]) as any;
+        replyEntry.sendStatus = 'sent';
+        replyEntry.sendLog = info ? JSON.stringify(info) : null;
+      } catch (err: any) {
+        // include timeout or other send errors
+        console.error('Failed to send reply email', err);
+        replyEntry.sendStatus = 'error';
+        replyEntry.sendLog = String(err?.message ?? err);
+      }
     } catch (err: any) {
-      console.error('Failed to send reply email', err);
+      console.error('Failed to create transporter or send email', err);
       replyEntry.sendStatus = 'error';
       replyEntry.sendLog = String(err?.message ?? err);
     }

@@ -38,6 +38,8 @@ export default function Notifications({ flattenedMessages, paginatedMessages, su
     const [replyText, setReplyText] = useState("");
     const [sending, setSending] = useState(false);
     const [openLogKey, setOpenLogKey] = useState<string | null>(null);
+    const [imapLoading, setImapLoading] = useState(false);
+    const [imapResult, setImapResult] = useState<string | null>(null);
 
     return (
         <section
@@ -58,6 +60,47 @@ export default function Notifications({ flattenedMessages, paginatedMessages, su
                         disabled={submissionsLoading}
                     >
                         Refresh
+                    </button>
+                        <button
+                        className={styles.ghostButton}
+                        type="button"
+                        onClick={async () => {
+                            setImapLoading(true);
+                            setImapResult(null);
+                            try {
+                                // try to read the admin token from sessionStorage so the admin UI
+                                // can call this protected endpoint without exposing server secrets.
+                                let headers: Record<string, string> = {};
+                                try {
+                                    const saved = sessionStorage.getItem('devbutter_admin_auth');
+                                    if (saved) {
+                                        const parsed = JSON.parse(saved);
+                                        if (parsed && parsed.token) {
+                                            headers['Authorization'] = `Bearer ${parsed.token}`;
+                                        }
+                                    }
+                                } catch (e) {
+                                    // ignore session read errors
+                                }
+
+                                const res = await fetch('/api/imap-check', { method: 'POST', headers });
+                                const json = await res.json().catch(() => null);
+                                if (!res.ok) {
+                                    setImapResult(`Error ${res.status}: ${json ? JSON.stringify(json) : res.statusText}`);
+                                } else {
+                                    setImapResult(JSON.stringify(json));
+                                }
+                            } catch (err: any) {
+                                setImapResult(String(err?.message ?? err));
+                            } finally {
+                                setImapLoading(false);
+                                // refresh submissions after attempting IMAP check
+                                try { await fetchFormSubmissions(); } catch (e) { /* ignore */ }
+                            }
+                        }}
+                        disabled={imapLoading || submissionsLoading}
+                    >
+                        {imapLoading ? 'Running IMAP...' : 'Run IMAP check'}
                     </button>
                 </div>
             </div>

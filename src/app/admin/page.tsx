@@ -9,10 +9,12 @@ import Nav from "@/components/Admin/Nav";
 import Notifications from "@/components/Admin/Notifications";
 import ProjectsPanel from "@/components/Admin/ProjectsPanel";
 import EmailsPanel from "@/components/Admin/EmailsPanel";
+import ImapMessagesPanel from "@/components/Admin/ImapMessages";
+import { ImapModalProvider } from "@/contexts/ImapModalContext";
 
 type EmailTemplateConfig = (typeof emailTemplates)[number];
 
-type PanelSectionId = "overview" | "projects" | "form-submissions" | "emails" | "email-mock-data";
+type PanelSectionId = "overview" | "projects" | "form-submissions" | "emails" | "email-mock-data" | "imap-messages";
 
 interface PanelSectionCopy {
   title: string;
@@ -64,6 +66,14 @@ const PANEL_SECTIONS: PanelSectionConfig[] = [
     copy: {
       title: "Template mock data",
       description: "See which fields feed each email layout at a glance.",
+    },
+  },
+  {
+    id: "imap-messages",
+    label: "IMAP logs",
+    copy: {
+      title: "IMAP logs",
+      description: "View raw IMAP import events and processing results.",
     },
   },
 ];
@@ -268,24 +278,20 @@ export default function AdminPage(): React.JSX.Element {
     if (!selectedMessage) return [] as any[];
     const submission = formSubmissions.find(s => s._id === selectedMessage.submissionId);
     if (!submission || !Array.isArray(submission.messages)) return [] as any[];
-
-    const rootId = selectedMessage.messageId;
+    // Show the full message history for the submission (original messages and replies).
+    // Previously we filtered by a single rootId which could exclude earlier or nested
+    // messages — returning the full list ensures the UI shows the complete conversation.
     const all = submission.messages as any[];
 
-    // include the original message and any replies that reference replyToMessageId === rootId
-    const conversation = all.filter(m => {
-      // when messageId is missing, fall back to createdAt comparison
-      if (rootId) {
-        if (m.messageId && String(m.messageId) === String(rootId)) return true;
-        if (m.replyToMessageId && String(m.replyToMessageId) === String(rootId)) return true;
-      }
-      return false;
-    }).map(m => ({ ...m }));
+    const conversation = all.map(m => ({ ...m }));
 
-    // sort chronological ascending
+    // sort chronological ascending so older messages appear first
     conversation.sort((a, b) => {
       const at = new Date(a.createdAt).getTime();
       const bt = new Date(b.createdAt).getTime();
+      if (Number.isNaN(at) && Number.isNaN(bt)) return 0;
+      if (Number.isNaN(at)) return 1;
+      if (Number.isNaN(bt)) return -1;
       return at - bt;
     });
 
@@ -788,6 +794,9 @@ export default function AdminPage(): React.JSX.Element {
                 />
 
                 <EmailsPanel templatesAvailable={templatesAvailable} activeTemplateId={activeTemplateId} setActiveTemplateId={setActiveTemplateId} activeTemplate={activeTemplate} previewHtml={previewHtml} />
+                <ImapModalProvider>
+                  <ImapMessagesPanel />
+                </ImapModalProvider>
               </div>
             </div>
           )}
