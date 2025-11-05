@@ -3,7 +3,7 @@ $height: calc(100vh - var(--header-height));
 .container {
     padding: 0 4rem;
 
-    background-color: var(--blue-50);
+    background-color: transparent;
 
     position: relative;
 
@@ -147,7 +147,7 @@ $height: calc(100vh - var(--header-height));
         align-items: center;
         justify-content: center;
 
-        font-family: "Roboto";
+        font-family: var(--font-roboto);
         font-weight: 600;
         font-size: 1.5rem;
         color: var(--green-500);

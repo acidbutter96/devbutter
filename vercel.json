@@ -1,5 +1,11 @@
 {
     "rewrites": [
         {"source": "/(.*)", "destination": "/"}
+    ],
+    "crons": [
+        {
+            "path": "/api/imap-check",
+            "schedule": "0 10 * * *"
+        }
     ]
 }

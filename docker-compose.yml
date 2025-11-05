@@ -1,0 +1,32 @@
+services:
+  mail:
+    image: tvial/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: example.com
+    env_file:
+      - .env.mail
+    ports:
+      # SMTP for sending (map to localhost:1025 to avoid conflict with local smtp)
+      # SMTP is not exposed here to avoid colliding with Mailpit (we use Mailpit on 1025 to
+      # inspect outgoing messages). Keep IMAP ports exposed for the IMAP client/worker.
+      
+      # IMAP ports exposed for the IMAP client / worker
+      - "127.0.0.1:143:143"
+      - "127.0.0.1:993:993"
+    volumes:
+      - ./maildata/:/var/mail
+      - ./config/:/tmp/docker-mailserver/
+      - ./state/:/var/mail-state
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: devbutter_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    environment:
+      - "LOG_LEVEL=info"
+    volumes:
+      - ./mailpit-data:/data

@@ -6,7 +6,7 @@ import StackCarousel from "./StackCarousel";
 
 export const Experience = (): React.JSX.Element => {
     return (
-        <div id="projects" className={styles.container}>
+        <div id="experience" className={styles.container}>
             <div id="title" className={styles.firstRow}>
                 <h2>experience</h2>
             </div>
@@ -27,11 +27,11 @@ export const Experience = (): React.JSX.Element => {
                     <div className={styles.skillsCarousel}>
                     </div>
                 </div>
-                <div className={styles.experienceTextContainer}>
-                    <p>
-                        It is a long established fact that a reader will be distracted by the readable content of a <span className={styles.pinkHighlight}>page</span> when looking at its layout. The point of using <span className={styles.greenHighlight}>Lorem Ipsum</span> is that it has a more-or-less normal distribution of letters, as <span className={styles.pinkHighlight}>opposed to using</span> &lsquo;Content here, content here&rsquo;, making it look like readable English. Many desktop <span className={styles.greenHighlight}></span> packages and web page editors now use Lorem Ipsum as their default model text, and a search for &lsquo;lorem ipsum&rsquo; will uncover <span className={styles.pinkHighlight}>many web sites</span> still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    </p>
-                </div>
+                    <div className={styles.experienceTextContainer}>
+                        <p>
+                            I provide software development services across <span className={styles.pinkHighlight}>web</span>, <span className={styles.pinkHighlight}>backend</span>, <span className={styles.pinkHighlight}>data science</span>, <span className={styles.pinkHighlight}>AI</span> and <span className={styles.pinkHighlight}>mobile</span>. I build production APIs and backends with <span className={styles.greenHighlight}>FastAPI</span>, <span className={styles.greenHighlight}>Flask</span> and Node/Express, and implement web and mobile interfaces using <span className={styles.greenHighlight}>React</span> and <span className={styles.greenHighlight}>React Native</span>. I design, train and deploy <span className={styles.greenHighlight}>LLM</span>-based solutions and ML models, automate document processing with <span className={styles.pinkHighlight}>OCR</span> and <span className={styles.pinkHighlight}>Selenium</span>, and design data pipelines and orchestrate workflows with <span className={styles.greenHighlight}>Airflow</span>. I regularly use tools like <span className={styles.greenHighlight}>pandas</span>, <span className={styles.greenHighlight}>scikit-learn</span>, and <span className={styles.greenHighlight}>TensorFlow</span>.
+                        </p>
+                    </div>
             </div>
             <div className={styles.thirdRow}>
                 <div className={styles.carouselContainer}>

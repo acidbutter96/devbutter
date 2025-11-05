@@ -5,7 +5,8 @@ interface InputInterface {
     about?: string | "" | undefined;
     alt?: string | "" | undefined;
     name?: string | "" | undefined;
-    type: "text" | "textarea";
+    placeholder?: string | "";
+    type: "text" | "textarea" | "email" | "password" | "number";
     onChange?: (event: ChangeEvent) => void;
     onClick?: (event: any) => void;
 }
@@ -16,22 +17,48 @@ const Input = (
         alt="",
         name="",
         type="text",
+        placeholder="",
         onChange,
         onClick,
     }:InputInterface): React.JSX.Element => {
+    // textarea will have a fixed height defined in CSS; we no longer auto-resize via JS
+
     return <div className={styles.container}>
-        <input type={type} name={name} about={""} alt={""}
-            onChange={(event)=>{
-                if(onChange){
-                    onChange(event);
-                }
-            }}
-            onClick={(event)=>{
-                if(onClick){
-                    onClick(event);
-                }
-            }}
-        />
+        {type === "textarea" ? (
+            <textarea
+                name={name}
+                placeholder={placeholder}
+                about={about}
+                onChange={(event) => {
+                    if (onChange) {
+                        onChange(event);
+                    }
+                }}
+                onClick={(event) => {
+                    if (onClick) {
+                        onClick(event);
+                    }
+                }}
+            />
+        ) : (
+            <input
+                type={type}
+                name={name}
+                about={about}
+                alt={alt}
+                placeholder={placeholder}
+                onChange={(event) => {
+                    if (onChange) {
+                        onChange(event);
+                    }
+                }}
+                onClick={(event) => {
+                    if (onClick) {
+                        onClick(event);
+                    }
+                }}
+            />
+        )}
     </div>
 }
 

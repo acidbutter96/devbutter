@@ -13,7 +13,7 @@ $projectFontSize: 1.3125rem;
     align-items: flex-start;
     justify-content: flex-start;
 
-    height: calc(100vh - 5rem);
+    min-height: calc(100vh - 5rem);
 
     background-color: var(--blue-50);
 
@@ -40,6 +40,8 @@ $projectFontSize: 1.3125rem;
     display: flex;
     flex-direction: row;
 
+
+
     width: 100%;
     z-index: 4;
 
@@ -52,6 +54,7 @@ $projectFontSize: 1.3125rem;
     display: flex;
 
     padding: 4rem 0 1rem 4rem;
+    padding-bottom: 3rem;
 
     width: 100%;
 
@@ -117,43 +120,218 @@ $projectFontSize: 1.3125rem;
     }
 }
 
+.secondRow {
+    $contactFormPercentage: 50%;
 
-.contactFormColumn {
-    background-color: red;
+    width: 100%;
+
     display: flex;
-    
-    height: 100%;
-    width: 50%;
-    input {
-        background-color: var(--green-500);
+    flex-direction: row;
+
+    .contactFormColumn {
+        display: flex;
+
+        height: 100%;
+
+        padding-top: 3rem;
+        width: $contactFormPercentage;
+
+        form {
+            width: 100%;
+            height: 100%;
+
+            // background-color: var(--blue-50);
+        }
+
+        /* input/textarea styling moved to the Input component's styles.module.scss */
+
+        .subjectContainer {
+            width: 100%;
+
+            /* message container uses Input component's textarea rendering and styling */
+        }
+
+        .buttonContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            .submitButton {
+                width: 50%;
+                height: 3.5rem;
+                /* match input height */
+                background-color: var(--green-50);
+                color: var(--pink-50);
+                font-family: var(--font-roboto);
+                font-weight: 800;
+                font-size: 2rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                border: none;
+                cursor: pointer;
+                transition: background-color 150ms ease, color 150ms ease;
+
+                .buttonIcon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: transform 150ms ease;
+
+                    svg {
+                        width: 2.2rem;
+                        height: 1.8rem;
+                    }
+                }
+
+                .buttonText {
+                    transition: transform 150ms ease;
+                    display: inline-block;
+                }
+
+                &:hover {
+                    background-color: var(--pink-50);
+                    color: var(--green-50);
+
+                    .buttonIcon {
+                        transform: scale(1.25);
+                    }
+
+                    .buttonText {
+                        transform: scale(1.12);
+                    }
+                }
+            }
+        }
     }
+
+    /* wrappers and error styling for form validation */
+    .fieldWrapper {
+        width: 100%;
+        display: block;
+
+        /* ensure input inside the Input component gets highlighted via outline when parent has error */
+        input {
+            transition: outline-color 120ms ease, box-shadow 120ms ease;
+            outline: none;
+        }
+    }
+
+    .hasError {
+        input {
+            outline: 2px solid var(--pink-500);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(246,76,111,0.08);
+        }
+    }
+
+    .errorText {
+        color: var(--pink-500);
+        font-family: var(--font-roboto);
+        font-size: 0.875rem;
+        font-weight: 400;
+        margin-top: 0.25rem;
+    }
+
+
+    $mediaIconSize: 3rem;
+
+    .textColumn {
+        padding-left: 1rem;
+        width: calc(100% - $contactFormPercentage);
+
+        min-height: 40rem;
+
+        .pinkText {
+            color: var(--pink-50);
+        }
+
+        .greenText {
+            color: var(--green-50);
+        }
+
+        .titleRow {
+            font-family: var(--font-roboto);
+
+            h3 {
+                font-size: 2.5rem;
+            }
+        }
+
+        .textRow {
+            font-family: var(--font-roboto);
+            font-size: 2rem;
+            font-weight: 100;
+            line-height: 4rem;
+        }
+
+        .socialMediaRow {
+            display: flex;
+            gap: .5rem;
+
+            .socialMediaIcon {
+                display: flex;
+
+                height: $mediaIconSize;
+                width: $mediaIconSize;
+            }
+        }
+    }
+
+    .sentTextColumn {
+        padding-left: 1rem;
+
+        .pinkText {
+            color: var(--pink-50);
+        }
+
+        .greenText {
+            color: var(--green-50);
+        }
+
+        .titleRow {
+            font-family: var(--font-roboto);
+
+            h3 {
+                font-size: 2rem;
+            }
+        }
+
+        .textRow {
+            font-family: var(--font-roboto);
+            font-size: 1.5rem;
+            font-weight: 100;
+        }
+
+        .socialMediaRow {
+            display: flex;
+            gap: .5rem;
+
+            .socialMediaIcon {
+                display: flex;
+
+                height: $mediaIconSize;
+                width: $mediaIconSize;
+            }
+        }
+    }
+
+    
 }
 
-
-
-$mediaIconSize: 3rem;
-
-.textColumn {
-    .pinkText {
-        color: var(--pink-50);
-    }
-    .titleRow {
-        font-family: Roboto;
-    }
-
-    .textRow {
-        font-family: Roboto;
-    }
-
-    .socialMediaRow {
+.successView {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .imageContainer {
         display: flex;
-        gap: .5rem;
-
-        .socialMediaIcon {
-            display: flex;
-
-            height: $mediaIconSize;
-            width: $mediaIconSize;
-        }
+        justify-content: center;
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+        
+        width: 30rem;
     }
 }

@@ -1,0 +1,28 @@
+name: IMAP check
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # every 5 minutes (GitHub Actions handles this)
+  workflow_dispatch:
+
+jobs:
+  call-imap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call IMAP check endpoint
+        env:
+          DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+          IMAP_SECRET: ${{ secrets.IMAP_CHECK_SECRET }}
+        run: |
+          if [ -z "$DEPLOY_URL" ]; then
+            echo "Set the secret DEPLOY_URL to your deployed site URL (e.g. https://your-site.vercel.app)";
+            exit 1;
+          fi
+          if [ -z "$IMAP_SECRET" ]; then
+            echo "IMAP_CHECK_SECRET not set in secrets. Set IMAP_CHECK_SECRET in repository secrets.";
+            exit 1;
+          fi
+          echo "Calling $DEPLOY_URL/api/imap-check"
+          status=$(curl -sS -o /tmp/imap.json -w "%{http_code}" -X POST -H "x-imap-secret: $IMAP_SECRET" "$DEPLOY_URL/api/imap-check") || true
+          echo "HTTP status: $status"
+          cat /tmp/imap.json || true
