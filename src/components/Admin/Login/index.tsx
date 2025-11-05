@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "@/app/admin/styles.module.scss";
+import styles from "./styles.module.scss";
 
 interface Props {
   email: string;
