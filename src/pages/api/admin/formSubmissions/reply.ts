@@ -85,9 +85,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       replyToMessageId: messageId ?? null,
     };
 
-    // append reply to messages array
-    const updateResult = await collection.updateOne({ _id: submissionDoc._id }, { $push: { messages: replyEntry }, $set: { updatedAt: new Date() } });
-
     // Build email using the user-reply template
     const template = emailTemplates.find(t => t.id === 'user-reply');
     if (!template) {
@@ -109,21 +106,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const html = template.buildHtml(sampleData);
     const subject = template.subject || 'Reply from DevButter';
 
-    // send email
+    // attempt to send email and capture send status/log
     try {
       const transporter = await createTransporter();
-  const from = process.env.SMTP_FROM ?? `"${adminName}" <${adminEmail}>`;
-      await transporter.sendMail({
+      const from = process.env.SMTP_FROM ?? `"${adminName}" <${adminEmail}>`;
+      const info = await transporter.sendMail({
         from,
         to: submissionDoc.email,
         subject,
         html,
         text: replyMessage,
       });
-    } catch (err) {
+
+      replyEntry.sendStatus = 'sent';
+      replyEntry.sendLog = info ? JSON.stringify(info) : null;
+    } catch (err: any) {
       console.error('Failed to send reply email', err);
-      // we proceed even if mail sending fails - the reply was saved in DB.
+      replyEntry.sendStatus = 'error';
+      replyEntry.sendLog = String(err?.message ?? err);
     }
+
+    // append reply to messages array (persist send status/log together)
+    const updateResult = await collection.updateOne({ _id: submissionDoc._id }, { $push: { messages: replyEntry }, $set: { updatedAt: new Date() } });
 
     return res.status(201).json({ matchedCount: updateResult.matchedCount, modifiedCount: updateResult.modifiedCount, reply: replyEntry });
   } catch (error) {

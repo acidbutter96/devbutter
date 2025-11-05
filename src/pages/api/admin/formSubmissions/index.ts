@@ -11,6 +11,8 @@ interface SafeMessageResponse {
   telephone: string | null;
   name: string | null;
   read: boolean;
+  sendStatus?: string | null;
+  sendLog?: string | null;
 }
 
 interface SafeSubmissionResponse {
@@ -70,6 +72,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 telephone: rawMessage.telephone ?? null,
                 name: rawMessage.name ?? null,
                 read: Boolean(rawMessage.read),
+                sendStatus: rawMessage.sendStatus ?? null,
+                sendLog: rawMessage.sendLog ? String(rawMessage.sendLog) : null,
               };
             })
           : [];

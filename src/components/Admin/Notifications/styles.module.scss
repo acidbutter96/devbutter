@@ -1,0 +1,339 @@
+@import '../styles.module.scss';
+
+/* Notifications-specific rules can go here */
+.sectionNotifications {
+    gap: 1.75rem;
+}
+
+.notificationsLayout {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    align-items: flex-start;
+}
+
+.notificationDetailContent {
+    max-height: 20rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.notificationList {
+    gap: 1.25rem;
+    padding: 1.5rem;
+}
+
+.notificationListHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    h5 {
+        margin: 0;
+        font-size: 1.05rem;
+    }
+}
+
+.notificationListCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.65rem;
+    min-width: 1.8rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.notificationItems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.notificationItem {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.05);
+    }
+}
+
+.notificationItemActive {
+    border-color: rgba(246, 76, 111, 0.35);
+    background: rgba(246, 76, 111, 0.14);
+
+    &.notificationItemUnread {
+        border-color: rgba(246, 76, 111, 0.35);
+    }
+}
+
+.notificationItemUnread {
+    border-color: rgba(4, 211, 97, 0.4);
+}
+
+.notificationItemHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.notificationItemTitle {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.notificationItemMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.notificationUnreadDot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--green-500);
+    box-shadow: 0 0 0 3px rgba(4, 211, 97, 0.18);
+}
+
+.notificationItemEmail {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.notificationItemSubject {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.notificationItemPreview {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.notificationDetail {
+    gap: 1.25rem;
+    padding: 1.75rem;
+
+    max-height: 39rem;
+}
+
+.notificationDetailHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+
+    h4 {
+        margin: 0 0 0.25rem;
+        font-size: 1.2rem;
+    }
+
+    time {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.62);
+    }
+}
+
+.notificationDetailMeta {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+    div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    dt {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    dd {
+        margin: 0;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.82);
+    }
+}
+
+.notificationDetailBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    p {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.78);
+        white-space: pre-wrap;
+    }
+}
+
+/* Pagination / controls row */
+.paginationRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+}
+
+.paginationInfo {
+    color: rgba(255,255,255,0.72);
+    font-size: 0.9rem;
+}
+
+.paginationControls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Conversation area */
+.conversation {
+    margin-top: 12px;
+}
+
+.conversationHeading {
+    margin: 0 0 8px 0;
+}
+
+.conversationEntry {
+    border-left: 2px solid rgba(255,255,255,0.06);
+    padding-left: 12px;
+    margin-bottom: 8px;
+}
+
+.conversationEntryHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.conversationWho {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.conversationTime {
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+}
+
+.conversationEntryMessage {
+    margin-top: 6px;
+
+    p {
+        margin: 6px 0;
+    }
+}
+
+.sendStatusContainer {
+    margin-top: 8px;
+}
+
+.logButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.logToggleText {
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+}
+
+.sendStatusText {
+    font-weight: 700;
+}
+
+.sendStatusError {
+    color: var(--pink-50);
+}
+
+.sendStatusSuccess {
+    color: var(--green-50);
+}
+
+.logPre {
+    background: #000;
+    color: #fff;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    overflow: auto;
+    white-space: pre-wrap;
+    border-left: 4px solid transparent;
+}
+
+.logPreError {
+    border-left-color: var(--pink-50);
+}
+
+.logPreSuccess {
+    border-left-color: var(--green-50);
+}
+
+/* Reply area */
+.replySection {
+    margin-top: 12px;
+}
+
+.replyLabel {
+    display: block;
+    margin-bottom: 6px;
+    color: rgba(255,255,255,0.8);
+}
+
+.replyTextarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.replyActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.emptyDash {
+    margin: 0;
+}
