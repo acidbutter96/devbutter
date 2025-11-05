@@ -127,6 +127,12 @@ $height: calc(100vh - var(--header-height));
     // }
 }
 
+.swipeupLink {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
 .swipeupContainer {
     background-color: transparent;
     display: flex;
@@ -160,13 +166,35 @@ $height: calc(100vh - var(--header-height));
             justify-content: center;
         }
 
-        &:hover {
-            img {
-                width: 100;
-                height: 100;
-            }
-        }
+        /* hover state handled on the link so both arrow and text react */
+        transition: color 200ms ease;
     }
+}
+
+/* arrow styling and hover animation */
+.swipeupLink {
+    text-decoration: none;
+    color: var(--green-500); /* default arrow/text color */
+    display: inline-block;
+}
+
+.swipeupLink .swipeupButton {
+    transition: color 160ms ease;
+}
+
+.swipeupLink .swipeupArrow {
+    display: block;
+    transition: transform 180ms ease, color 160ms ease;
+    transform: translateY(0);
+    color: inherit; /* used by svg fill via currentColor */
+}
+
+.swipeupLink:hover {
+    color: var(--pink-500);
+}
+
+.swipeupLink:hover .swipeupArrow {
+    transform: translateY(-6px);
 }
 
 /* Mobile / tablet responsive adjustments */
@@ -190,21 +218,41 @@ $height: calc(100vh - var(--header-height));
             width: 100%;
             padding: 2rem 1.5rem;
             text-align: center;
-            .title { font-size: 2.4rem; }
+            /* slightly larger title on tablet/mobile for better readability */
+            .title { font-size: 2.6rem; }
             .text { font-size: 1.6rem; }
         }
     }
 
+    /* keep the hero image visually anchored near the bottom-right of the hero block */
     .imageContainer {
-        position: relative;
+        position: absolute;
         bottom: 0;
-        left: 0;
-        width: 100%;
-        margin-top: 1rem;
+        right: 0;
+        left: auto;
+        width: 48%;
+        max-width: 480px;
+        margin-top: 0;
     }
 }
 
 @media screen and (max-width: 430px) {
+    .row {
+        flex-direction: column;
+
+        .secondColumn {
+
+                .imageContainer {
+                    /* pin the image to the bottom-right corner of the hero block */
+                    position: relative;
+                    bottom: 0;
+                    right: 0;
+                    left: auto;
+                    width: 100%;
+                    max-width: 420px;
+                }
+        }
+    }
     .container {
         padding: 0 1.25rem;
     }
@@ -213,15 +261,20 @@ $height: calc(100vh - var(--header-height));
         padding-bottom: 6rem;
         .titleContainer {
             padding: 1rem 0.5rem;
-            .title { font-size: 2rem; }
+            /* mobile: make title a bit larger than before per design request */
+            .title { font-size: 2.8rem; }
             .text { font-size: 1.4rem; }
         }
     }
 
     .imageContainer {
+        /* pin the image to the bottom-right corner of the hero block */
+        position: absolute;
         bottom: 0;
-        left: 0;
-        width: 100%;
+        right: 0;
+        left: auto;
+        width: 50%;
+        max-width: 420px;
     }
 
     .swipeupContainer {

@@ -28,14 +28,20 @@ export const DevButter = (): React.JSX.Element => {
             </div>
             <div id="row2" className={styles.row}>
                 <div id="swipeup" className={styles.swipeupContainer}>
-                    <div className={styles.swipeupButton}>
-                        <div id="arrow" className={styles.swipeUpButtonCentered}>
-                            <Image src="/swipearrow.svg" alt="up arrow" width={30} height={30}/>
+                    {/* anchor link to the Projects section */}
+                    <a href="#projects" className={styles.swipeupLink}>
+                        <div className={styles.swipeupButton}>
+                            <div id="arrow" className={styles.swipeupButtonCentered}>
+                                {/* inline SVG so we can style fill via currentColor and animate on hover */}
+                                <svg className={styles.swipeupArrow} width="23" height="14" viewBox="0 0 23 14" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                                    <path d="M2.89375 13.8938L11.5 5.30625L20.1063 13.8938L22.75 11.25L11.5 0L0.25 11.25L2.89375 13.8938Z" fill="currentColor" />
+                                </svg>
+                            </div>
+                            <div id="text" className={styles.swipeupButtonCentered}>
+                                swipe up
+                            </div>
                         </div>
-                        <div id="text" className={styles.swipeUpButtonCentered}>
-                            swipe up
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
