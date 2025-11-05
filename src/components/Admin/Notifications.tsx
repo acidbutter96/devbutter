@@ -38,6 +38,7 @@ export default function Notifications({ flattenedMessages, paginatedMessages, su
   const ITEMS_PER_PAGE = 3;
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
+  const [openLogKey, setOpenLogKey] = useState<string | null>(null);
 
   return (
     <section
@@ -180,6 +181,18 @@ export default function Notifications({ flattenedMessages, paginatedMessages, su
                     const isAdmin = Boolean(entry.fromAdmin);
                     const who = isAdmin ? (entry.name || 'Admin') : (entry.name || 'User');
                     const time = entry.createdAt ? formatTimestamp(entry.createdAt) : 'Unknown';
+                    const logKey = entry.messageId ? `msg-${String(entry.messageId)}` : `conv-${idx}`;
+                    const rawLog = entry.sendLog ?? null;
+                    let prettyLog: string | null = null;
+                    if (rawLog) {
+                      try {
+                        const parsed = JSON.parse(String(rawLog));
+                        prettyLog = JSON.stringify(parsed, null, 2);
+                      } catch (e) {
+                        prettyLog = String(rawLog);
+                      }
+                    }
+
                     return (
                       <div key={`conv-${idx}`} style={{ borderLeft: '2px solid rgba(255,255,255,0.06)', paddingLeft: 12, marginBottom: 8 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
@@ -187,6 +200,40 @@ export default function Notifications({ flattenedMessages, paginatedMessages, su
                           <time style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{time}</time>
                         </div>
                         <div style={{ marginTop: 6 }}>{entry.message ? entry.message.split(/\n{2,}/).map((p: string, i: number) => <p key={`e-${idx}-p-${i}`} style={{ margin: '6px 0' }}>{p}</p>) : <p style={{ margin: 0 }}>—</p>}</div>
+
+                        {/* send status as a small toggle button which reveals a formatted JSON log panel */}
+                        {entry.sendStatus ? (
+                          <div style={{ marginTop: 8 }}>
+                            <button
+                              type="button"
+                              className={styles.ghostButton}
+                              onClick={() => setOpenLogKey(prev => (prev === logKey ? null : logKey))}
+                              aria-expanded={openLogKey === logKey}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12 }}
+                            >
+                              <span style={{ fontWeight: 700, color: entry.sendStatus === 'error' ? 'var(--pink-50)' : 'var(--green-50)' }}>{entry.sendStatus}</span>
+                              {prettyLog ? <span style={{ color: 'rgba(255,255,255,0.72)', fontSize: 12 }}>{openLogKey === logKey ? 'Hide log' : 'View log'}</span> : null}
+                            </button>
+
+                            {openLogKey === logKey && prettyLog ? (
+                              <pre
+                                style={{
+                                  background: '#000',
+                                  color: '#fff',
+                                  padding: 12,
+                                  borderRadius: 6,
+                                  marginTop: 8,
+                                  maxHeight: 120,
+                                  overflow: 'auto',
+                                  borderLeft: `4px solid ${entry.sendStatus === 'error' ? 'var(--pink-50)' : 'var(--green-50)'}`,
+                                  whiteSpace: 'pre-wrap',
+                                }}
+                              >
+                                {prettyLog}
+                              </pre>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
                     );
                   })}

@@ -30,29 +30,62 @@ const emailFieldLabels: Record<keyof EmailSampleData, string> = {
 };
 
 export default function EmailsPanel({ templatesAvailable, activeTemplateId, setActiveTemplateId, activeTemplate, previewHtml }: Props) {
+  const [imapLoading, setImapLoading] = React.useState(false);
+  const [imapResult, setImapResult] = React.useState<string | null>(null);
+
+  async function runImapCheck() {
+    setImapLoading(true);
+    setImapResult(null);
+    try {
+      const res = await fetch('/api/imap-check', { method: 'POST' });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        setImapResult(`Error ${res.status}: ${json ? JSON.stringify(json) : res.statusText}`);
+      } else {
+        setImapResult(JSON.stringify(json));
+      }
+    } catch (err: any) {
+      setImapResult(String(err?.message ?? err));
+    } finally {
+      setImapLoading(false);
+    }
+  }
   return (
     <>
       <section className={`${styles.section} ${styles.sectionWide}`} id="emails" aria-label="Email templates">
         <div className={`${styles.card} ${styles.templates}`}>
           {templatesAvailable ? (
             <>
-              <div className={styles.tabList} role="tablist" aria-label="Email templates">
-                {emailTemplates.map((template: EmailTemplateConfig) => {
-                  const isActive = template.id === activeTemplate?.id;
-                  return (
-                    <button
-                      type="button"
-                      key={template.id}
-                      role="tab"
-                      aria-selected={isActive}
-                      className={`${styles.tabButton} ${isActive ? styles.tabButtonActive : ""}`}
-                      onClick={() => setActiveTemplateId(template.id)}
-                    >
-                      <span>{template.label}</span>
-                    </button>
-                  );
-                })}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div className={styles.tabList} role="tablist" aria-label="Email templates">
+                    {emailTemplates.map((template: EmailTemplateConfig) => {
+                      const isActive = template.id === activeTemplate?.id;
+                      return (
+                        <button
+                          type="button"
+                          key={template.id}
+                          role="tab"
+                          aria-selected={isActive}
+                          className={`${styles.tabButton} ${isActive ? styles.tabButtonActive : ""}`}
+                          onClick={() => setActiveTemplateId(template.id)}
+                        >
+                          <span>{template.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button type="button" className={styles.ghostButton} onClick={() => runImapCheck()} disabled={imapLoading}>
+                    {imapLoading ? 'Running IMAP...' : 'Run IMAP check'}
+                  </button>
+                </div>
               </div>
+
+              {imapResult ? (
+                <div style={{ marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.9)' }}>IMAP check result: <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{imapResult}</pre></div>
+              ) : null}
 
               {activeTemplate ? (
                 <div className={styles.previewLayout}>
