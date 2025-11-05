@@ -24,6 +24,9 @@ pnpm-debug.log*
 
 # Maildir used for local docker-mailserver (store mail delivered to local users)
 maildata/
+
+# Deployment env (kept out of repo)
+env.deploy
 mailpit-data/
 
 # Vercel
