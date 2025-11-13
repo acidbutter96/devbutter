@@ -119,13 +119,27 @@ $projectFontSize: 1.3125rem;
         min-height: calc(100vh - 15rem);
 
         position: relative;
-        z-index: 10;
+            z-index: 10;
+
+            /* Ajuste: subir um pouco o container para não sobrepor o carrossel */
+            transform: translateY(-4rem);
+            transition: transform 0.25s ease;
 
         .imageContainer {
             display: flex;
 
             margin-right: 2rem;
             z-index: 1;
+
+            /* Limitar o tamanho da imagem da pessoa e tornar responsiva */
+            max-width: 28rem;
+            width: auto;
+
+            img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
         }
 
         .electricFieldContainer {
@@ -203,6 +217,8 @@ $projectFontSize: 1.3125rem;
         .midTriangle {
             width: 18rem;
             height: 140vh;
+
+            display: none;
             
             position: absolute;
             top: 4rem;
@@ -307,7 +323,10 @@ $projectFontSize: 1.3125rem;
             width: 100%;
             
             height: 10rem;
-            .imageContainer { margin-right: 0; display:block; margin-bottom: 20rem; }
+            /* aumentar espaço inferior no mobile para evitar sobreposição com o carrossel */
+            padding-bottom: 18rem;
+            transform: translateY(-8rem);
+            .imageContainer { margin-right: 0; display:block; margin-bottom: 20rem; max-width: 22rem; width: 100%; }
             .electricFieldContainer { position: relative; top: 0; left: 0; }
             .midTriangle { display: none; }
         }
@@ -365,7 +384,8 @@ $projectFontSize: 1.3125rem;
                    abaixo para não sobrepor o carrossel */
                 margin: 0 0rem;
                 display: block;
-                width: 200rem;
+                width: 20rem;
+                max-width: 86%;
                 align-self: center;
             }
 
@@ -388,7 +408,8 @@ $projectFontSize: 1.3125rem;
                 margin: 0 0rem;
                 padding-top: 2rem;
                 display: block;
-                width: 200rem;
+                width: 18rem;
+                max-width: 90%;
                 align-self: center;
             }
             .midTriangle { display: none; }

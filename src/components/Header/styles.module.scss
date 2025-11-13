@@ -78,6 +78,7 @@
 }
 
 /* desktop: slightly transparent by default, fully visible on hover */
+/* desktop: slightly transparent by default, fully visible on hover */
 @media screen and (min-width: 431px) {
     .navbarContainer {
         opacity: .85;
@@ -85,6 +86,13 @@
         &:hover {
             opacity: 1;
         }
+    }
+}
+
+/* mobile and tablet: slightly more transparent (0.8) to match requested style */
+@media screen and (max-width: 1024px) {
+    .navbarContainer {
+        opacity: 0.8;
     }
 }
 

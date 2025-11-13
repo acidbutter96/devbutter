@@ -46,7 +46,8 @@ body {
     background-color: var(--blue-50);
     color: var(--white);
 
-    overflow: hidden;
+    /* allow scrolling by default; hide scrollbar only on mobile/tablet via media queries */
+    overflow: auto;
 }
 
 /* Ensure anchored sections and the first hero section are offset from the fixed header
@@ -101,4 +102,21 @@ img {
     display: flex;
     width: 100%;
     height: 100%;
+}
+
+/* Hide native scrollbars on mobile and tablet devices while preserving scrolling behaviour */
+@media (max-width: 1024px) {
+    html, body {
+        /* allow touch/trackpad scrolling but hide the visible scrollbar */
+        overflow: auto;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    /* WebKit browsers */
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
 }
