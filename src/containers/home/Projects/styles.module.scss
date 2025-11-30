@@ -113,54 +113,86 @@ $projectFontSize: 1.3125rem;
 
         z-index: 2;
 
-        .projectContainer {
+        .projectCard {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(7, 12, 32, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            text-align: left;
+            width: 100%;
+
+            &:hover,
+            &:focus-visible {
+                border-color: var(--green-500);
+                transform: translateY(-4px);
+                outline: none;
+            }
+
+            h3 {
+                font-size: $projectFontSize;
+                color: var(--white);
+                margin: 0 0 0.25rem 0;
+            }
+
+            p {
+                margin: 0;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+        }
+
+        .projectThumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                transform: scale(1.02);
+                pointer-events: none;
+            }
+        }
+
+        .projectThumbPlaceholder {
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+        }
+
+        .projectInfo {
+            display: flex;
             flex-direction: column;
+            gap: 0.35rem;
+        }
 
-            // position: absolute;
-            // top: 2rem;
+        .projectInfoMuted {
+            color: rgba(255, 255, 255, 0.5);
+        }
 
-            padding: 4rem;
-
-            .upperRow {
-                display: flex;
-                width: 100%;
-            }
-
-            .underRow {
-                display: flex;
-                justify-content: space-between;
-                align-items: normal;
-
-                width: 100%;
-
-                .titleContainer {
-                    width: 70%;
-
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-
-                    h3 {
-                        font-family: var(--font-roboto);
-                        font-weight: 400;
-                        font-size: $projectFontSize;
-                        color: var(--pink-50);
-                    }
-                }
-
-                .skillImageContainer {
-                    width: calc(3 * $skillImageWidth); //calc($skillImageWidth + $skillImageWidth);
-                    height: calc($skillImageWidth + 1rem);
-
-                    display: flex;
-                    // position: absolute;
-                    // right: 0;
-                    // bottom: 0;
-                }
-            }
+        .projectStatus {
+            grid-column: 1 / -1;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--white);
+            text-align: center;
+            font-size: 1rem;
         }
     }
 
@@ -372,6 +404,93 @@ $projectFontSize: 1.3125rem;
             grid-template-columns: 1fr;
             grid-row-gap: 1.25rem;
         }
-        .projectContainer { padding: 2rem; }
+        .projectCard { padding: 1rem; }
     }
+}
+
+.projectModalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 9999;
+}
+
+.projectModal {
+    width: min(900px, 95%);
+    background: var(--blue-900, #030718);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: var(--white);
+}
+
+.projectModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    h3 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    button {
+        border: none;
+        background: transparent;
+        color: var(--white);
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+}
+
+.projectModalDescription,
+.projectModalDescriptionMuted {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.projectModalDescriptionMuted {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.projectModalPreview {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        pointer-events: none;
+    }
+}
+
+.projectModalPreviewDisabled {
+    cursor: default;
+}
+
+.projectModalPreviewHint {
+    position: absolute;
+    bottom: 0.85rem;
+    right: 1rem;
+    font-size: 0.85rem;
+    background: rgba(3, 7, 24, 0.75);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
 }

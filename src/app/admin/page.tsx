@@ -483,7 +483,19 @@ export default function AdminPage(): React.JSX.Element {
     setLoading(true);
     setError(null);
     try {
-      const payload = { title, description, link, repo };
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        link: link.trim(),
+        repo: repo.trim(),
+      };
+
+      if (!payload.title || !payload.link) {
+        setError("Title and link are required");
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch(`/api/admin`, {
           method: "POST",
           headers: {

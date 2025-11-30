@@ -1,7 +1,8 @@
 export interface ProjectContainerInterface {
-    id: number;
-    name: string;
-    imgSrc: string;
-    stacks: string[];
-    url: string | "/";
+    id: string;
+    title: string;
+    description?: string;
+    link?: string;
+    repo?: string;
+    createdAt?: string;
 }
