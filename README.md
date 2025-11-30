@@ -85,6 +85,15 @@ curl -u "$ADMIN_EMAIL:$ADMIN_PASSWORD" -X POST -H "Content-Type: application/jso
 http://localhost:3000/api/admin
 ```
 
+## Contact form CAPTCHA
+
+The public contact form now requires a Google reCAPTCHA token to submit successfully. Provide the following environment variables (for local development use `.env`; in production configure your hosting provider):
+
+- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` — site key generated in the Google reCAPTCHA console (exposed to the browser).
+- `RECAPTCHA_SECRET_KEY` — secret key used by the API route to validate the token server-side.
+
+Without these keys the form will stay disabled and the API will reject requests.
+
 ## Vercel: IMAP check job & environment variables
 
 This project provides a serverless API route `/api/imap-check` that performs a single IMAP check

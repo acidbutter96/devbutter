@@ -3,8 +3,42 @@
 import Footer from '@/components/Footer';
 import styles from './styles.module.scss';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import type { ComponentClass } from 'react';
 import Input from '@/components/Input';
+import type ReCAPTCHAInstance from 'react-google-recaptcha';
+import type { ReCAPTCHAProps } from 'react-google-recaptcha';
+
+type ReCAPTCHAClass = typeof import('react-google-recaptcha')['default'];
+
+const LazyReCAPTCHA = forwardRef<ReCAPTCHAInstance, ReCAPTCHAProps>((props, ref) => {
+    const [Component, setComponent] = useState<ReCAPTCHAClass | null>(null);
+
+    useEffect(() => {
+        let isCancelled = false;
+
+        import('react-google-recaptcha')
+            .then((mod) => {
+                if (!isCancelled) {
+                    setComponent(() => mod.default);
+                }
+            })
+            .catch((err) => {
+                console.error('Failed to load reCAPTCHA component', err);
+            });
+
+        return () => {
+            isCancelled = true;
+        };
+    }, []);
+
+    if (!Component) return null;
+
+    const ComponentClassRef = Component as unknown as ComponentClass<ReCAPTCHAProps>;
+    return <ComponentClassRef ref={ref as any} {...props} />;
+});
+
+LazyReCAPTCHA.displayName = 'LazyReCAPTCHA';
 
 export const GetInTouch = (): React.JSX.Element => {
     const [bgCounter, setBgCounter] = useState<number>(1);
@@ -12,12 +46,15 @@ export const GetInTouch = (): React.JSX.Element => {
     const SENT_KEY = 'contact_form_sent_at';
     const ONE_HOUR_MS = 1000 * 60 * 60;
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const recaptchaRef = useRef<ReCAPTCHAInstance | null>(null);
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
     useEffect(() => {
         const timeout = setTimeout(() => {
             if (bgCounter == 4) {
                 setBgCounter(1);
-                console.log("dfemonionadnoiasd")
             } else {
                 setBgCounter(bgCounter + 1);
             }
@@ -54,7 +91,7 @@ export const GetInTouch = (): React.JSX.Element => {
             // sessionStorage may not be available in some environments; fail silently
             console.warn('Could not access sessionStorage', e);
         }
-    }, [])
+    }, [ONE_HOUR_MS])
 
     return (
         <div id="getInTouch" className={styles.container}>
@@ -118,37 +155,71 @@ export const GetInTouch = (): React.JSX.Element => {
                                     return;
                                 }
                                 setErrors({});
+                                setSubmitError(null);
+
+                                if (!siteKey) {
+                                    setSubmitError('Captcha not configured. Please try again later.');
+                                    return;
+                                }
+
+                                if (!recaptchaRef.current) {
+                                    setSubmitError('Captcha is still loading. Please try again in a moment.');
+                                    return;
+                                }
+
+                                setIsSubmitting(true);
+
+                                let captchaToken: string | null = null;
+                                try {
+                                    captchaToken = await recaptchaRef.current?.executeAsync();
+                                    recaptchaRef.current?.reset();
+                                } catch (err) {
+                                    console.error('Captcha execution error', err);
+                                    setSubmitError('Could not verify you are human. Please retry.');
+                                    setIsSubmitting(false);
+                                    return;
+                                }
+
+                                if (!captchaToken) {
+                                    setSubmitError('Captcha verification failed. Please try again.');
+                                    setIsSubmitting(false);
+                                    return;
+                                }
 
                                 try {
                                     const res = await fetch('/api/formSubmit', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(payload),
+                                        body: JSON.stringify({ ...payload, captchaToken }),
                                     });
 
                                     if (!res.ok) {
-                                        console.error('Form submit error', await res.json());
-                                        alert('Erro ao enviar formulário.');
+                                        const errorPayload = await res.json().catch(() => ({}));
+                                        console.error('Form submit error', errorPayload);
+                                        setSubmitError(errorPayload?.error ?? 'Erro ao enviar formulário.');
                                         return;
                                     }
 
                                     // mark as sent in sessionStorage and show success view for 1 hour
                                     try {
                                         sessionStorage.setItem(SENT_KEY, String(Date.now()));
-                                    } catch (e) {
-                                        console.warn('Could not write sessionStorage', e);
+                                    } catch (errStorage) {
+                                        console.warn('Could not write sessionStorage', errStorage);
                                     }
                                     setIsSent(true);
                                     form.reset();
+                                    setSubmitError(null);
 
                                     // schedule clearing after one hour
                                     setTimeout(() => {
-                                        try { sessionStorage.removeItem(SENT_KEY); } catch (e) {}
+                                        try { sessionStorage.removeItem(SENT_KEY); } catch (errStorage) {}
                                         setIsSent(false);
                                     }, ONE_HOUR_MS);
                                 } catch (err) {
                                     console.error(err);
-                                    alert('Erro ao enviar formulário.');
+                                    setSubmitError('Erro ao enviar formulário.');
+                                } finally {
+                                    setIsSubmitting(false);
                                 }
                             }}>
                                 <div className={styles.row}>
@@ -187,7 +258,7 @@ export const GetInTouch = (): React.JSX.Element => {
                                 </div>
                                 <div className={styles.row}>
                                     <div className={styles.buttonContainer}>
-                                    <button type="submit" className={styles.submitButton}>
+                                    <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
                                         <span className={styles.buttonIcon} aria-hidden>
                                             {/* simple inline envelope icon */}
                                             <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,8 +266,20 @@ export const GetInTouch = (): React.JSX.Element => {
                                                 <path d="M1 2L10 9L19 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                             </svg>
                                         </span>
-                                        <span className={styles.buttonText}>Send</span>
+                                        <span className={styles.buttonText}>{isSubmitting ? 'Sending...' : 'Send'}</span>
                                     </button>
+                                    {siteKey ? (
+                                        <LazyReCAPTCHA
+                                            ref={recaptchaRef}
+                                            sitekey={siteKey}
+                                            size="invisible"
+                                        />
+                                    ) : null}
+                                    {submitError && (
+                                        <div className={styles.errorText} role="alert">
+                                            {submitError}
+                                        </div>
+                                    )}
                                     </div>
                                 </div>
                             </form>
