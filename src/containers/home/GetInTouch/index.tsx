@@ -273,7 +273,7 @@ export const GetInTouch = (): React.JSX.Element => {
                                             ref={recaptchaRef}
                                             sitekey={siteKey}
                                             size="invisible"
-                                            badge="inline"
+                                            badge="bottomleft"
                                         />
                                     ) : null}
                                     <p className={styles.recaptchaNotice}>
