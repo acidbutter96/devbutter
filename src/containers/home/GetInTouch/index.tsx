@@ -48,6 +48,7 @@ export const GetInTouch = (): React.JSX.Element => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
     const recaptchaRef = useRef<ReCAPTCHAInstance | null>(null);
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
@@ -167,30 +168,20 @@ export const GetInTouch = (): React.JSX.Element => {
                                     return;
                                 }
 
+                                const captchaTokenToSend = captchaToken;
+
+                                if (!captchaTokenToSend) {
+                                    setSubmitError('Please complete the captcha challenge before sending.');
+                                    return;
+                                }
+
                                 setIsSubmitting(true);
-
-                                let captchaToken: string | null = null;
-                                try {
-                                    captchaToken = await recaptchaRef.current?.executeAsync();
-                                    recaptchaRef.current?.reset();
-                                } catch (err) {
-                                    console.error('Captcha execution error', err);
-                                    setSubmitError('Could not verify you are human. Please retry.');
-                                    setIsSubmitting(false);
-                                    return;
-                                }
-
-                                if (!captchaToken) {
-                                    setSubmitError('Captcha verification failed. Please try again.');
-                                    setIsSubmitting(false);
-                                    return;
-                                }
 
                                 try {
                                     const res = await fetch('/api/formSubmit', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ ...payload, captchaToken }),
+                                        body: JSON.stringify({ ...payload, captchaToken: captchaTokenToSend }),
                                     });
 
                                     if (!res.ok) {
@@ -220,6 +211,8 @@ export const GetInTouch = (): React.JSX.Element => {
                                     setSubmitError('Erro ao enviar formulário.');
                                 } finally {
                                     setIsSubmitting(false);
+                                    recaptchaRef.current?.reset();
+                                    setCaptchaToken(null);
                                 }
                             }}>
                                 <div className={styles.row}>
@@ -258,6 +251,25 @@ export const GetInTouch = (): React.JSX.Element => {
                                 </div>
                                 <div className={styles.row}>
                                     <div className={styles.buttonContainer}>
+                                    {siteKey ? (
+                                        <LazyReCAPTCHA
+                                            ref={recaptchaRef}
+                                            sitekey={siteKey}
+                                            theme="dark"
+                                            onChange={(token) => {
+                                                setCaptchaToken(token);
+                                                if (token) setSubmitError(null);
+                                            }}
+                                            onExpired={() => {
+                                                setCaptchaToken(null);
+                                                setSubmitError('Captcha expired. Please try again.');
+                                            }}
+                                            onErrored={() => {
+                                                setCaptchaToken(null);
+                                                setSubmitError('Captcha failed to load. Please reload and try again.');
+                                            }}
+                                        />
+                                    ) : null}
                                     <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
                                         <span className={styles.buttonIcon} aria-hidden>
                                             {/* simple inline envelope icon */}
@@ -268,14 +280,6 @@ export const GetInTouch = (): React.JSX.Element => {
                                         </span>
                                         <span className={styles.buttonText}>{isSubmitting ? 'Sending...' : 'Send'}</span>
                                     </button>
-                                    {siteKey ? (
-                                        <LazyReCAPTCHA
-                                            ref={recaptchaRef}
-                                            sitekey={siteKey}
-                                            size="invisible"
-                                            badge="bottomleft"
-                                        />
-                                    ) : null}
                                     <p className={styles.recaptchaNotice}>
                                         This site is protected by reCAPTCHA and the Google{' '}
                                         <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>{' '}
