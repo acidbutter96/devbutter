@@ -39,7 +39,7 @@ export default function ProjectsPanel({ projects, loading, title, description, l
           <form onSubmit={onAddProject} className={styles.form}>
             <label className={styles.field}>
               <span>Title</span>
-              <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} required />
+              <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} required placeholder="Awesome project" />
             </label>
             <label className={styles.field}>
               <span>Description</span>
@@ -47,7 +47,7 @@ export default function ProjectsPanel({ projects, loading, title, description, l
             </label>
             <label className={styles.field}>
               <span>Link</span>
-              <input className={styles.input} value={link} onChange={e => setLink(e.target.value)} />
+              <input className={styles.input} type="url" value={link} onChange={e => setLink(e.target.value)} required placeholder="https://example.com" />
             </label>
             <label className={styles.field}>
               <span>Repo</span>
