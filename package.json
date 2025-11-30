@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "create-indexes": "node scripts/createIndexes.mjs",
+    "create-imap-indexes": "node scripts/createImapIndexes.mjs",
     "migrate:seed-admin": "node scripts/migrateCreateAdmin.mjs",
     "imap:worker": "node scripts/imapWorker.mjs"
   },

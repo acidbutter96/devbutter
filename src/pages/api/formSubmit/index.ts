@@ -73,8 +73,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // send user confirmation email (fire-and-log on error)
       try {
-        await sendUserConfirmationEmail({
-          userName: name ?? existing.name ?? '',
+        const info = await sendUserConfirmationEmail({
+          userName: body.name ?? existing.name ?? '',
           userEmail: normalizedEmail,
           adminName: process.env.ADMIN_NAME ?? 'Admin',
           adminEmail: process.env.ADMIN_EMAIL ?? 'oi@devbutter.com',
@@ -82,8 +82,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           formSource: 'Contact form',
           message: message ?? '',
         });
-      } catch (err) {
+
+        // persist send status/log into the specific message entry we just pushed
+        try {
+          await collection.updateOne(
+            { _id: existing._id },
+            {
+              $set: {
+                'messages.$[elem].sendStatus': 'sent',
+                'messages.$[elem].sendLog': JSON.stringify(info ?? null),
+                updatedAt: new Date(),
+              },
+            },
+            { arrayFilters: [{ 'elem.messageId': messageObj.messageId }] } as any
+          );
+        } catch (e) {
+          console.error('Failed to persist send status for updated submission', e);
+        }
+      } catch (err: any) {
         console.error('Failed to send user confirmation email (update):', err);
+        try {
+          await collection.updateOne(
+            { _id: existing._id },
+            { $set: { 'messages.$[elem].sendStatus': 'error', 'messages.$[elem].sendLog': String(err?.message ?? err), updatedAt: new Date() } },
+            { arrayFilters: [{ 'elem.messageId': messageObj.messageId }] } as any
+          );
+        } catch (e) {
+          console.error('Failed to persist error send status for updated submission', e);
+        }
       }
 
       return res.status(200).json({ matchedCount: result.matchedCount, modifiedCount: result.modifiedCount });
@@ -111,8 +137,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // send user confirmation email (fire-and-log on error)
     try {
-      await sendUserConfirmationEmail({
-        userName: name ?? '',
+      const info = await sendUserConfirmationEmail({
+        userName: body.name ?? '',
         userEmail: normalizedEmail,
         adminName: process.env.ADMIN_NAME ?? 'Admin',
         adminEmail: process.env.ADMIN_EMAIL ?? 'oi@devbutter.com',
@@ -120,8 +146,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         formSource: 'Contact form',
         message: message ?? '',
       });
-    } catch (err) {
+
+      try {
+        await collection.updateOne(
+          { _id: result.insertedId },
+          { $set: { 'messages.$[elem].sendStatus': 'sent', 'messages.$[elem].sendLog': JSON.stringify(info ?? null), updatedAt: new Date() } },
+          { arrayFilters: [{ 'elem.messageId': firstMessage.messageId }] } as any
+        );
+      } catch (e) {
+        console.error('Failed to persist send status for new submission', e);
+      }
+    } catch (err: any) {
       console.error('Failed to send user confirmation email (insert):', err);
+      try {
+        await collection.updateOne(
+          { _id: result.insertedId },
+          { $set: { 'messages.$[elem].sendStatus': 'error', 'messages.$[elem].sendLog': String(err?.message ?? err), updatedAt: new Date() } },
+          { arrayFilters: [{ 'elem.messageId': firstMessage.messageId }] } as any
+        );
+      } catch (e) {
+        console.error('Failed to persist error send status for new submission', e);
+      }
     }
 
     return res.status(201).json({ id: result.insertedId });
@@ -228,11 +273,14 @@ async function sendUserConfirmationEmail(data: EmailSampleData) {
 
   const from = process.env.SMTP_FROM ?? `"${data.adminName}" <${data.adminEmail}>`;
 
-  await transporter.sendMail({
+  // return the nodemailer info so callers can persist send status / logs
+  const info = await transporter.sendMail({
     from,
     to: data.userEmail,
     subject,
     html,
     text: data.message,
   });
+
+  return info;
 }
