@@ -26,6 +26,7 @@
     "nodemailer": "^7.0.10",
     "react": "^18",
     "react-dom": "^18",
+    "react-google-recaptcha": "^2.1.0",
     "react-multi-carousel": "^2.8.4"
   },
   "devDependencies": {
@@ -34,6 +35,7 @@
     "@types/nodemailer": "^7.0.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-google-recaptcha": "^2.1.9",
     "eslint": "^8",
     "eslint-config-next": "14.1.3",
     "sass": "^1.72.0",

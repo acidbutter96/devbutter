@@ -10,6 +10,7 @@ interface FormBody {
   message?: string;
   subject?: string;
   telephone?: string;
+  captchaToken?: string;
 }
 
 interface MessageEntry {
@@ -29,14 +30,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const body: FormBody = req.body ?? {};
+  const { captchaToken, name, email, message, subject, telephone } = body;
 
   // minimal validation
-  if (!body.name || !body.email) {
+  if (!name || !email) {
     return res.status(400).json({ error: "Missing required fields: name and email" });
   }
 
+  const captchaValid = await verifyCaptcha(captchaToken, req);
+  if (!captchaValid) {
+    return res.status(400).json({ error: 'Captcha verification failed.' });
+  }
+
   // normalize email for case-insensitive matching and storage
-  const normalizedEmail = String(body.email).trim().toLowerCase();
+  const normalizedEmail = String(email).trim().toLowerCase();
 
   try {
     const db = await getDb();
@@ -50,10 +57,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const messageObj: MessageEntry = {
         messageId: new ObjectId(),
         createdAt: new Date(),
-        message: body.message ?? null,
-        subject: body.subject ?? null,
-        telephone: body.telephone ?? null,
-        name: body.name ?? existing.name ?? null,
+        message: message ?? null,
+        subject: subject ?? null,
+        telephone: telephone ?? null,
+        name: name ?? existing.name ?? null,
         read: false,
       };
 
@@ -73,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           adminEmail: process.env.ADMIN_EMAIL ?? 'oi@devbutter.com',
           submittedAt: new Date().toLocaleString(),
           formSource: 'Contact form',
-          message: body.message ?? '',
+          message: message ?? '',
         });
 
         // persist send status/log into the specific message entry we just pushed
@@ -112,10 +119,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const firstMessage: MessageEntry = {
       messageId: new ObjectId(),
       createdAt: new Date(),
-      message: body.message ?? null,
-      subject: body.subject ?? null,
-      telephone: body.telephone ?? null,
-      name: body.name ?? null,
+      message: message ?? null,
+      subject: subject ?? null,
+      telephone: telephone ?? null,
+      name: name ?? null,
       read: false,
     };
 
@@ -137,7 +144,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         adminEmail: process.env.ADMIN_EMAIL ?? 'oi@devbutter.com',
         submittedAt: new Date().toLocaleString(),
         formSource: 'Contact form',
-        message: body.message ?? '',
+        message: message ?? '',
       });
 
       try {
@@ -167,6 +174,75 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error("Error saving form submission:", error);
     return res.status(500).json({ error: "Error saving form submission" });
   }
+}
+
+async function verifyCaptcha(token: string | undefined, req: NextApiRequest): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+
+  if (!secret) {
+    console.error('Missing RECAPTCHA_SECRET_KEY environment variable.');
+    return false;
+  }
+
+  if (!token) {
+    console.warn('Captcha token missing in request body.');
+    return false;
+  }
+
+  try {
+    const params = new URLSearchParams();
+    params.append('secret', secret);
+    params.append('response', token);
+
+    const remoteIp = getClientIp(req);
+    if (remoteIp) {
+      params.append('remoteip', remoteIp);
+    }
+
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+
+    if (!response.ok) {
+      console.error('Captcha verification request failed with status', response.status);
+      return false;
+    }
+
+    const result = await response.json() as { success: boolean; score?: number; ['error-codes']?: string[] };
+
+    if (!result.success) {
+      console.warn('Captcha verification failed', result['error-codes']);
+      return false;
+    }
+
+    if (typeof result.score === 'number' && result.score < 0.5) {
+      console.warn('Captcha verification returned low score:', result.score);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Captcha verification error:', err);
+    return false;
+  }
+}
+
+function getClientIp(req: NextApiRequest): string | null {
+  const forwarded = req.headers['x-forwarded-for'];
+
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const [first] = forwarded.split(',');
+    return first?.trim() || null;
+  }
+
+  if (Array.isArray(forwarded) && forwarded.length > 0) {
+    const [first] = forwarded;
+    return first?.split(',')[0]?.trim() || null;
+  }
+
+  return req.socket?.remoteAddress ?? null;
 }
 
 async function createTransporter() {
