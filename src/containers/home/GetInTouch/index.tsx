@@ -273,8 +273,16 @@ export const GetInTouch = (): React.JSX.Element => {
                                             ref={recaptchaRef}
                                             sitekey={siteKey}
                                             size="invisible"
+                                            badge="bottomleft"
                                         />
                                     ) : null}
+                                    <p className={styles.recaptchaNotice}>
+                                        This site is protected by reCAPTCHA and the Google{' '}
+                                        <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>{' '}
+                                        and{' '}
+                                        <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a>{' '}
+                                        apply.
+                                    </p>
                                     {submitError && (
                                         <div className={styles.errorText} role="alert">
                                             {submitError}
