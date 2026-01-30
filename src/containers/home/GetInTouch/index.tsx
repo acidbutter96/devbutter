@@ -315,15 +315,27 @@ export const GetInTouch = (): React.JSX.Element => {
                             </p>
                         </div>
                         <div className={styles.socialMediaRow}>
-                            <div className={styles.socialMediaIcon}>
+                            <a
+                                className={styles.socialMediaIcon}
+                                href="https://github.com/acidbutter96"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="GitHub"
+                            >
                                 <Image src="/static/images/icons/github.svg" alt="" width={30} height={30} />
-                            </div>
-                            <div className={styles.socialMediaIcon}>
+                            </a>
+                            <a
+                                className={styles.socialMediaIcon}
+                                href="https://www.linkedin.com/in/mpereira96"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="LinkedIn"
+                            >
                                 <Image src="/static/images/icons/linkedin.svg" alt="" width={30} height={30} />
-                            </div>
-                            <div className={styles.socialMediaIcon}>
+                            </a>
+                            {/* <div className={styles.socialMediaIcon}>
                                 <Image src="/static/images/icons/instagram.svg" alt="" width={30} height={30} />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
