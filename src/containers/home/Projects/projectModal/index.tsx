@@ -48,8 +48,20 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps): React.JSX.Elemen
                 {project.description ? (
                     <p className={styles.projectModalDescription}>{project.description}</p>
                 ) : (
-                    <p className={styles.projectModalDescriptionMuted}>Sem descrição disponível.</p>
+                    <p className={styles.projectModalDescriptionMuted}>Projeto publicado no portfólio com preview disponível para navegação.</p>
                 )}
+                <div className={styles.projectModalLinks}>
+                    {project.link ? (
+                        <a className={styles.projectModalLink} href={project.link} target="_blank" rel="noreferrer">
+                            Abrir site
+                        </a>
+                    ) : null}
+                    {project.repo ? (
+                        <a className={styles.projectModalLink} href={project.repo} target="_blank" rel="noreferrer">
+                            Ver repositório
+                        </a>
+                    ) : null}
+                </div>
                 <div
                     className={previewClassName}
                     role={project.link ? "button" : undefined}

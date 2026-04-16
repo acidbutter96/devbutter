@@ -66,7 +66,7 @@ export const Projects = (): React.JSX.Element => {
         <div id="projects" className={styles.container}>
             <div className={styles.row}>
                 <div id="title" className={styles.firstRow}>
-                    <h2>projects</h2>
+                    <h2>projetos</h2>
                 </div>
             </div>
             <div id="grind-container" className={styles.secondRow}>
@@ -79,13 +79,6 @@ export const Projects = (): React.JSX.Element => {
                     ))}
                 </div>
                 <div id="void" className={styles.void}>
-                    <div id="load-button" className={styles.loadBtnContainer}>
-                        <div id="btn-container" className={styles.btnContainer}>
-                            <button id="load-more">
-                                <Image src={"./swipearrow.svg"} alt={"Load more"} width={0} height={0} />
-                            </button>
-                        </div>
-                    </div>
                     <div onClick={changeSpin} id="spunspinner" className={styles.spinner}>
                         <div id="spiralContainer"
                         className={
