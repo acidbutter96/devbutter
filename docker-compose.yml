@@ -30,3 +30,11 @@ services:
       - "LOG_LEVEL=info"
     volumes:
       - ./mailpit-data:/data
+  mongo:
+    image: mongo:latest
+    container_name: selolibertaria_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db

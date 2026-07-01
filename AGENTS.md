@@ -10,3 +10,9 @@
 
 - 2026-04-16: `projects-hard-square-previews`
   Remove qualquer arredondamento dos previews e placeholders da seção de projetos para manter os cards 100% quadrados.
+
+- 2026-04-16: `projects-subtle-width-boost`
+  Aumenta levemente a largura útil da grade e dos cards da seção de projetos para melhorar presença visual sem alterar a estrutura.
+
+- 2026-04-16: `projects-card-width-only`
+  Mantém a largura geral da área de projetos e concentra o aumento visual apenas no card de cada projeto.
