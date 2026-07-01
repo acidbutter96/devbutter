@@ -8,6 +8,7 @@ $height: calc(100vh - 6rem);
 
     .pinkText {
         color: var(--pink-500);
+        -webkit-text-stroke-color: var(--green-500);
     }
 }
 
@@ -68,7 +69,7 @@ $height: calc(100vh - 6rem);
                 font-family: var(--font-roboto);
 
                 -webkit-text-stroke-width: 1px;
-                -webkit-text-stroke-color: var(--green-500);
+                -webkit-text-stroke-color: var(--pink-500);
             }
 
             .text {
