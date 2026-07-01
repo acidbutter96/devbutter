@@ -83,27 +83,25 @@ export const ComingSoonComponent = (): React.JSX.Element => {
 
     return (
         <div id="devbutter" className={styles.container}>
-            <div id="row1" className={styles.row}>
-                <div className={styles.firstRow}>
-                    <div id="text-container" className={styles.firstColumn}>
-                        <div className={styles.titleContainer}>
-                            <h1 className={styles.title}>
-                                DevButter!
-                            </h1>
-                            <p className={styles.text}>
-                                {currentWelcome}
-                            </p>
-                        </div>
+            <div className={styles.firstRow}>
+                <div id="text-container" className={styles.firstColumn}>
+                    <div className={styles.titleContainer}>
+                        <h1 className={styles.title}>
+                            Dev<span className={styles.pinkText}>Butter</span>!
+                        </h1>
+                        <p className={styles.text}>
+                            {currentWelcome}
+                        </p>
                     </div>
-                    <div id="image-container" className={styles.secondColumn}>
-                        <div className={styles.imageContainer}>
-                            <Image
-                                src={aliens[alienIndex]?.src}
-                                alt={aliens[alienIndex]?.title}
-                                width={60}
-                                height={50}
-                            />
-                        </div>
+                </div>
+                <div id="image-container" className={styles.secondColumn}>
+                    <div className={styles.imageContainer}>
+                        <Image
+                            src={aliens[alienIndex]?.src}
+                            alt={aliens[alienIndex]?.title}
+                            width={60}
+                            height={50}
+                        />
                     </div>
                 </div>
             </div>
