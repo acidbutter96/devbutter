@@ -1,0 +1,24 @@
+.main {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background: $db-black;
+  color: $db-text-primary;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $db-green;
+}
+
+.copy {
+  max-width: 28rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: $db-text-secondary;
+}
